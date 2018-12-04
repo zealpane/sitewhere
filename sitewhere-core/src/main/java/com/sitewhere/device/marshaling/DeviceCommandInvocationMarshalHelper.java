@@ -10,18 +10,17 @@ package com.sitewhere.device.marshaling;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.sitewhere.SiteWhere;
+import com.sitewhere.rest.model.common.MetadataProvider;
 import com.sitewhere.rest.model.device.command.DeviceCommand;
 import com.sitewhere.rest.model.device.event.DeviceCommandInvocation;
-import com.sitewhere.rest.model.device.event.DeviceEvent;
+import com.sitewhere.rest.model.device.marshaling.MarshaledDeviceCommandInvocation;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.device.IDeviceManagement;
 import com.sitewhere.spi.device.command.IDeviceCommand;
 import com.sitewhere.spi.device.event.IDeviceCommandInvocation;
-import com.sitewhere.spi.tenant.ITenant;
 
 /**
  * Configurable helper class that allows {@link DeviceCommandInvocation} model
@@ -32,10 +31,10 @@ import com.sitewhere.spi.tenant.ITenant;
 public class DeviceCommandInvocationMarshalHelper {
 
     /** Static logger instance */
-    private static Logger LOGGER = LogManager.getLogger();
+    private static Logger LOGGER = LoggerFactory.getLogger(DeviceCommandInvocationMarshalHelper.class);
 
-    /** Tenant */
-    private ITenant tenant;
+    /** Device Management */
+    private IDeviceManagement deviceManagement;
 
     /** Indicates whether to include command information */
     private boolean includeCommand = false;
@@ -43,34 +42,45 @@ public class DeviceCommandInvocationMarshalHelper {
     /** Cache to prevent repeated command lookups */
     private Map<String, DeviceCommand> commandsByToken = new HashMap<String, DeviceCommand>();
 
-    public DeviceCommandInvocationMarshalHelper(ITenant tenant) {
-	this(tenant, false);
+    public DeviceCommandInvocationMarshalHelper(IDeviceManagement deviceManagement) {
+	this(deviceManagement, false);
     }
 
-    public DeviceCommandInvocationMarshalHelper(ITenant tenant, boolean includeCommand) {
-	this.tenant = tenant;
+    public DeviceCommandInvocationMarshalHelper(IDeviceManagement deviceManagement, boolean includeCommand) {
+	this.deviceManagement = deviceManagement;
 	this.includeCommand = includeCommand;
     }
 
     /**
      * Convert an {@link IDeviceCommandInvocation} to a
-     * {@link DeviceCommandInvocation}, populating command information if
-     * requested so the marshaled data includes it.
+     * {@link DeviceCommandInvocation}, populating command information if requested
+     * so the marshaled data includes it.
      * 
      * @param source
      * @return
      * @throws SiteWhereException
      */
-    public DeviceCommandInvocation convert(IDeviceCommandInvocation source) throws SiteWhereException {
-	DeviceCommandInvocation result = new DeviceCommandInvocation();
-	DeviceEvent.copy(source, result);
+    public MarshaledDeviceCommandInvocation convert(IDeviceCommandInvocation source) throws SiteWhereException {
+	MarshaledDeviceCommandInvocation result = new MarshaledDeviceCommandInvocation();
 	result.setInitiator(source.getInitiator());
 	result.setInitiatorId(source.getInitiatorId());
 	result.setTarget(source.getTarget());
 	result.setTargetId(source.getTargetId());
 	result.setCommandToken(source.getCommandToken());
-	result.setStatus(source.getStatus());
 	result.setParameterValues(source.getParameterValues());
+
+	// Copy event fields.
+	result.setId(source.getId());
+	result.setAlternateId(source.getAlternateId());
+	result.setEventType(source.getEventType());
+	result.setDeviceId(source.getDeviceId());
+	result.setDeviceAssignmentId(source.getDeviceAssignmentId());
+	result.setAreaId(source.getAreaId());
+	result.setAssetId(source.getAssetId());
+	result.setEventDate(source.getEventDate());
+	result.setReceivedDate(source.getReceivedDate());
+	MetadataProvider.copy(source, result);
+
 	if (isIncludeCommand()) {
 	    if ((source.getCommandToken() == null) || (source.getCommandToken().isEmpty())) {
 		LOGGER.warn("Device invocation is missing command token.");
@@ -78,7 +88,7 @@ public class DeviceCommandInvocationMarshalHelper {
 	    }
 	    DeviceCommand command = commandsByToken.get(source.getCommandToken());
 	    if (command == null) {
-		IDeviceCommand found = getDeviceManagement(tenant).getDeviceCommandByToken(source.getCommandToken());
+		IDeviceCommand found = getDeviceManagement().getDeviceCommandByToken(source.getCommandToken());
 		if (found == null) {
 		    LOGGER.warn("Device invocation references a non-existent command token.");
 		    return result;
@@ -94,15 +104,19 @@ public class DeviceCommandInvocationMarshalHelper {
 	return result;
     }
 
-    protected IDeviceManagement getDeviceManagement(ITenant tenant) throws SiteWhereException {
-	return SiteWhere.getServer().getDeviceManagement(tenant);
-    }
-
     public boolean isIncludeCommand() {
 	return includeCommand;
     }
 
     public void setIncludeCommand(boolean includeCommand) {
 	this.includeCommand = includeCommand;
+    }
+
+    public IDeviceManagement getDeviceManagement() {
+	return deviceManagement;
+    }
+
+    public void setDeviceManagement(IDeviceManagement deviceManagement) {
+	this.deviceManagement = deviceManagement;
     }
 }

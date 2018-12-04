@@ -7,13 +7,9 @@
  */
 package com.sitewhere.rest.model.device.asset;
 
-import java.util.Map;
-
 import com.sitewhere.spi.SiteWhereException;
-import com.sitewhere.spi.asset.IAssetModuleManager;
+import com.sitewhere.spi.asset.IAssetManagement;
 import com.sitewhere.spi.device.event.IDeviceStateChange;
-import com.sitewhere.spi.device.event.state.StateChangeCategory;
-import com.sitewhere.spi.device.event.state.StateChangeType;
 
 /**
  * Wraps a {@link IDeviceStateChange} so that information about the asset
@@ -26,28 +22,24 @@ public class DeviceStateChangeWithAsset extends DeviceEventWithAsset implements 
     /** Serial version UID */
     private static final long serialVersionUID = -8012486373686574551L;
 
-    public DeviceStateChangeWithAsset(IDeviceStateChange wrapped, IAssetModuleManager assets)
+    public DeviceStateChangeWithAsset(IDeviceStateChange wrapped, IAssetManagement assetManagement)
 	    throws SiteWhereException {
-	super(wrapped, assets);
+	super(wrapped, assetManagement);
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.event.IDeviceStateChange#getCategory()
+     * @see com.sitewhere.spi.device.event.IDeviceStateChange#getAttribute()
      */
     @Override
-    public StateChangeCategory getCategory() {
-	return ((IDeviceStateChange) getWrapped()).getCategory();
+    public String getAttribute() {
+	return ((IDeviceStateChange) getWrapped()).getAttribute();
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.device.event.IDeviceStateChange#getType()
      */
     @Override
-    public StateChangeType getType() {
+    public String getType() {
 	return ((IDeviceStateChange) getWrapped()).getType();
     }
 
@@ -69,15 +61,5 @@ public class DeviceStateChangeWithAsset extends DeviceEventWithAsset implements 
     @Override
     public String getNewState() {
 	return ((IDeviceStateChange) getWrapped()).getNewState();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.event.IDeviceStateChange#getData()
-     */
-    @Override
-    public Map<String, String> getData() {
-	return ((IDeviceStateChange) getWrapped()).getData();
     }
 }

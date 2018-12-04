@@ -7,25 +7,17 @@
  */
 package com.sitewhere.spi.scheduling;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
 
-import com.sitewhere.spi.common.IMetadataProviderEntity;
+import com.sitewhere.spi.common.IPersistentEntity;
 
 /**
  * Represents a named schedule that can be applied to system actions.
  * 
  * @author Derek
  */
-public interface ISchedule extends IMetadataProviderEntity, Serializable {
-
-    /**
-     * Unique token for schedule.
-     * 
-     * @return
-     */
-    public String getToken();
+public interface ISchedule extends IPersistentEntity {
 
     /**
      * Schedule name.

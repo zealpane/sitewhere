@@ -7,6 +7,7 @@
  */
 package com.sitewhere.rest.model.search.user;
 
+import com.sitewhere.rest.model.search.SearchCriteria;
 import com.sitewhere.spi.user.IUserSearchCriteria;
 
 /**
@@ -14,16 +15,16 @@ import com.sitewhere.spi.user.IUserSearchCriteria;
  * 
  * @author Derek Adams
  */
-public class UserSearchCriteria implements IUserSearchCriteria {
+public class UserSearchCriteria extends SearchCriteria implements IUserSearchCriteria {
 
-    /** Flag for whether deleted devices are included */
-    private boolean includeDeleted = false;
+    /** Serial version UID */
+    private static final long serialVersionUID = 1269929281474978628L;
 
-    public boolean isIncludeDeleted() {
-	return includeDeleted;
+    public UserSearchCriteria() {
+	super();
     }
 
-    public void setIncludeDeleted(boolean includeDeleted) {
-	this.includeDeleted = includeDeleted;
+    public UserSearchCriteria(int pageNumber, int pageSize) {
+	super(pageNumber, pageSize);
     }
 }

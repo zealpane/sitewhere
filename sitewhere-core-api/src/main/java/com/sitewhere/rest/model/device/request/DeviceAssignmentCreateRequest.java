@@ -7,14 +7,12 @@
  */
 package com.sitewhere.rest.model.device.request;
 
-import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.sitewhere.spi.device.DeviceAssignmentType;
-import com.sitewhere.spi.device.IDeviceAssignment;
+import com.sitewhere.rest.model.common.request.PersistentEntityCreateRequest;
+import com.sitewhere.spi.device.DeviceAssignmentStatus;
 import com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest;
 
 /**
@@ -23,112 +21,92 @@ import com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest;
  * @author Derek Adams
  */
 @JsonInclude(Include.NON_NULL)
-public class DeviceAssignmentCreateRequest implements IDeviceAssignmentCreateRequest, Serializable {
+public class DeviceAssignmentCreateRequest extends PersistentEntityCreateRequest
+	implements IDeviceAssignmentCreateRequest {
 
     /** Serialization version identifier */
     private static final long serialVersionUID = -6880578458870122016L;
 
-    /** Token */
-    private String token;
+    /** Device token */
+    private String deviceToken;
 
-    /** Device hardware id */
-    private String deviceHardwareId;
+    /** Customer token */
+    private String customerToken;
 
-    /** Type of assignment */
-    private DeviceAssignmentType assignmentType;
+    /** Area token */
+    private String areaToken;
 
-    /** Asset module id */
-    private String assetModuleId;
+    /** Asset token */
+    private String assetToken;
 
-    /** Unique asset id */
-    private String assetId;
-
-    /** Metadata values */
-    private Map<String, String> metadata;
+    /** Status */
+    private DeviceAssignmentStatus status;
 
     /*
-     * (non-Javadoc)
-     * 
+     * @see com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest#
+     * getDeviceToken()
+     */
+    @Override
+    public String getDeviceToken() {
+	return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+	this.deviceToken = deviceToken;
+    }
+
+    /*
+     * @see com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest#
+     * getCustomerToken()
+     */
+    @Override
+    public String getCustomerToken() {
+	return customerToken;
+    }
+
+    public void setCustomerToken(String customerToken) {
+	this.customerToken = customerToken;
+    }
+
+    /*
      * @see
-     * com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest#getToken(
+     * com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest#getAreaToken(
      * )
      */
-    public String getToken() {
-	return token;
+    @Override
+    public String getAreaToken() {
+	return areaToken;
     }
 
-    public void setToken(String token) {
-	this.token = token;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest#
-     * getDeviceHardwareId ()
-     */
-    public String getDeviceHardwareId() {
-	return deviceHardwareId;
-    }
-
-    public void setDeviceHardwareId(String deviceHardwareId) {
-	this.deviceHardwareId = deviceHardwareId;
+    public void setAreaToken(String areaToken) {
+	this.areaToken = areaToken;
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest#
-     * getAssignmentType()
+     * @see
+     * com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest#getAssetToken
+     * ()
      */
-    public DeviceAssignmentType getAssignmentType() {
-	return assignmentType;
+    @Override
+    public String getAssetToken() {
+	return assetToken;
     }
 
-    public void setAssignmentType(DeviceAssignmentType assignmentType) {
-	this.assignmentType = assignmentType;
+    public void setAssetToken(String assetToken) {
+	this.assetToken = assetToken;
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest#
-     * getAssetModuleId()
+     * @see
+     * com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest#getStatus()
      */
-    public String getAssetModuleId() {
-	return assetModuleId;
+    @Override
+    public DeviceAssignmentStatus getStatus() {
+	return status;
     }
 
-    public void setAssetModuleId(String assetModuleId) {
-	this.assetModuleId = assetModuleId;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest#
-     * getAssetId()
-     */
-    public String getAssetId() {
-	return assetId;
-    }
-
-    public void setAssetId(String assetId) {
-	this.assetId = assetId;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest#
-     * getMetadata()
-     */
-    public Map<String, String> getMetadata() {
-	return metadata;
-    }
-
-    public void setMetadata(Map<String, String> metadata) {
-	this.metadata = metadata;
+    public void setStatus(DeviceAssignmentStatus status) {
+	this.status = status;
     }
 
     public static class Builder {
@@ -136,23 +114,11 @@ public class DeviceAssignmentCreateRequest implements IDeviceAssignmentCreateReq
 	/** Request being built */
 	private DeviceAssignmentCreateRequest request = new DeviceAssignmentCreateRequest();
 
-	public Builder(IDeviceAssignment api) {
-	    request.setToken(api.getToken());
-	    request.setDeviceHardwareId(api.getDeviceHardwareId());
-	    request.setAssetModuleId(api.getAssetModuleId());
-	    request.setAssetId(api.getAssetId());
-	    request.setAssignmentType(api.getAssignmentType());
-	    if (api.getMetadata() != null) {
-		request.setMetadata(new HashMap<String, String>());
-		request.getMetadata().putAll(api.getMetadata());
-	    }
-	}
-
-	public Builder(String hardwareId, String assetModuleId, String assetId) {
-	    request.setDeviceHardwareId(hardwareId);
-	    request.setAssetModuleId(assetModuleId);
-	    request.setAssetId(assetId);
-	    request.setAssignmentType(DeviceAssignmentType.Associated);
+	public Builder(String deviceToken, String customerToken, String areaToken, String assetToken) {
+	    request.setDeviceToken(deviceToken);
+	    request.setCustomerToken(customerToken);
+	    request.setAreaToken(areaToken);
+	    request.setAssetToken(assetToken);
 	}
 
 	public Builder metadata(String name, String value) {

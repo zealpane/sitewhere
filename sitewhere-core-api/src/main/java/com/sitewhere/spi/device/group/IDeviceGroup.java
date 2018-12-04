@@ -9,35 +9,15 @@ package com.sitewhere.spi.device.group;
 
 import java.util.List;
 
-import com.sitewhere.spi.common.IMetadataProviderEntity;
+import com.sitewhere.spi.common.IAccessible;
+import com.sitewhere.spi.common.IBrandedEntity;
 
 /**
  * Interface for a group of related devices.
  * 
  * @author Derek
  */
-public interface IDeviceGroup extends IMetadataProviderEntity {
-
-    /**
-     * Get the unique group token.
-     * 
-     * @return
-     */
-    public String getToken();
-
-    /**
-     * Get the group name.
-     * 
-     * @return
-     */
-    public String getName();
-
-    /**
-     * Get the group description.
-     * 
-     * @return
-     */
-    public String getDescription();
+public interface IDeviceGroup extends IBrandedEntity, IAccessible {
 
     /**
      * Get list of roles associated with element.

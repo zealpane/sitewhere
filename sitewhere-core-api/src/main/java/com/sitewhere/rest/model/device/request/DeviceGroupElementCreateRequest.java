@@ -13,8 +13,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.sitewhere.spi.device.group.GroupElementType;
-import com.sitewhere.spi.device.group.IDeviceGroupElement;
 import com.sitewhere.spi.device.request.IDeviceGroupElementCreateRequest;
 
 /**
@@ -28,31 +26,46 @@ public class DeviceGroupElementCreateRequest implements IDeviceGroupElementCreat
     /** Serialization version identifier */
     private static final long serialVersionUID = 652319724175005277L;
 
-    /** Element type */
-    private GroupElementType type;
+    /** Device token (null if nested group supplied) */
+    private String deviceToken;
 
-    /** Element id */
-    private String elementId;
+    /** Nested group token (null if device supplied) */
+    private String nestedGroupToken;
 
     /** List of roles for element */
     private List<String> roles = new ArrayList<String>();
 
-    public GroupElementType getType() {
-	return type;
+    /*
+     * @see com.sitewhere.spi.device.request.IDeviceGroupElementCreateRequest#
+     * getDeviceToken()
+     */
+    @Override
+    public String getDeviceToken() {
+	return deviceToken;
     }
 
-    public void setType(GroupElementType type) {
-	this.type = type;
+    public void setDeviceToken(String deviceToken) {
+	this.deviceToken = deviceToken;
     }
 
-    public String getElementId() {
-	return elementId;
+    /*
+     * @see com.sitewhere.spi.device.request.IDeviceGroupElementCreateRequest#
+     * getNestedGroupToken()
+     */
+    @Override
+    public String getNestedGroupToken() {
+	return nestedGroupToken;
     }
 
-    public void setElementId(String elementId) {
-	this.elementId = elementId;
+    public void setNestedGroupToken(String nestedGroupToken) {
+	this.nestedGroupToken = nestedGroupToken;
     }
 
+    /*
+     * @see
+     * com.sitewhere.spi.device.request.IDeviceGroupElementCreateRequest#getRoles()
+     */
+    @Override
     public List<String> getRoles() {
 	return roles;
     }
@@ -66,27 +79,18 @@ public class DeviceGroupElementCreateRequest implements IDeviceGroupElementCreat
 	/** Request being built */
 	private DeviceGroupElementCreateRequest request = new DeviceGroupElementCreateRequest();
 
-	public Builder(IDeviceGroupElement api) {
-	    request.setElementId(api.getElementId());
-	    request.setType(api.getType());
-	    if (api.getRoles() != null) {
-		request.setRoles(new ArrayList<String>());
-		request.getRoles().addAll(api.getRoles());
-	    }
+	public Builder(String deviceToken) {
+	    request.setDeviceToken(deviceToken);
 	}
 
-	public Builder(String id) {
-	    request.setElementId(id);
-	    request.setType(GroupElementType.Device);
+	public Builder asGroup() {
+	    request.setNestedGroupToken(request.getDeviceToken());
+	    request.setDeviceToken(null);
+	    return this;
 	}
 
 	public Builder withRole(String role) {
 	    request.getRoles().add(role);
-	    return this;
-	}
-
-	public Builder asGroup() {
-	    request.setType(GroupElementType.Group);
 	    return this;
 	}
 

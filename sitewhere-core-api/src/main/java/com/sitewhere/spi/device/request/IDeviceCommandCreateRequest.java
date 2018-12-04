@@ -8,8 +8,8 @@
 package com.sitewhere.spi.device.request;
 
 import java.util.List;
-import java.util.Map;
 
+import com.sitewhere.spi.common.request.IPersistentEntityCreateRequest;
 import com.sitewhere.spi.device.command.ICommandParameter;
 
 /**
@@ -17,14 +17,14 @@ import com.sitewhere.spi.device.command.ICommandParameter;
  * 
  * @author Derek
  */
-public interface IDeviceCommandCreateRequest {
+public interface IDeviceCommandCreateRequest extends IPersistentEntityCreateRequest {
 
     /**
-     * Get unique command token.
+     * Get token for device type command belongs to.
      * 
      * @return
      */
-    public String getToken();
+    public String getDeviceTypeToken();
 
     /**
      * Optional namespace for distinguishing commands.
@@ -53,11 +53,4 @@ public interface IDeviceCommandCreateRequest {
      * @return
      */
     public List<ICommandParameter> getParameters();
-
-    /**
-     * Get metadata values.
-     * 
-     * @return
-     */
-    public Map<String, String> getMetadata();
 }

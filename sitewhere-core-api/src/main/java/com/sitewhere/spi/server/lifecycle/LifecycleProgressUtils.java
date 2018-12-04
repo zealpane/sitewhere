@@ -1,10 +1,17 @@
+/*
+ * Copyright (c) SiteWhere, LLC. All rights reserved. http://www.sitewhere.com
+ *
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package com.sitewhere.spi.server.lifecycle;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sitewhere.rest.model.monitoring.ProgressMessage;
 import com.sitewhere.spi.SiteWhereException;
@@ -18,7 +25,7 @@ public class LifecycleProgressUtils {
 
     /** Static logger instance */
     @SuppressWarnings("unused")
-    private static Logger LOGGER = LogManager.getLogger();
+    private static Logger LOGGER = LoggerFactory.getLogger(LifecycleProgressUtils.class);
 
     /**
      * Common logic for starting an operation on an

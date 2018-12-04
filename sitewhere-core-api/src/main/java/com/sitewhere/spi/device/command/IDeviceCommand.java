@@ -8,29 +8,24 @@
 package com.sitewhere.spi.device.command;
 
 import java.util.List;
+import java.util.UUID;
 
-import com.sitewhere.spi.common.IMetadataProviderEntity;
+import com.sitewhere.spi.common.IAccessible;
+import com.sitewhere.spi.common.IPersistentEntity;
 
 /**
  * A parameterized command issued to a device.
  * 
  * @author Derek
  */
-public interface IDeviceCommand extends IMetadataProviderEntity {
+public interface IDeviceCommand extends IPersistentEntity, IAccessible {
 
     /**
-     * Get the unique command token.
+     * Get unique id of parent device type.
      * 
      * @return
      */
-    public String getToken();
-
-    /**
-     * Get token for the parent specification.
-     * 
-     * @return
-     */
-    public String getSpecificationToken();
+    public UUID getDeviceTypeId();
 
     /**
      * Optional namespace for distinguishing commands.
@@ -38,20 +33,6 @@ public interface IDeviceCommand extends IMetadataProviderEntity {
      * @return
      */
     public String getNamespace();
-
-    /**
-     * Get command name.
-     * 
-     * @return
-     */
-    public String getName();
-
-    /**
-     * Get a description of the command.
-     * 
-     * @return
-     */
-    public String getDescription();
 
     /**
      * Get list of parameters.

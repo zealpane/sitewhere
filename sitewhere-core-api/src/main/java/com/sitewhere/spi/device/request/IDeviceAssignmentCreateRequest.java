@@ -7,56 +7,48 @@
  */
 package com.sitewhere.spi.device.request;
 
-import java.util.Map;
-
-import com.sitewhere.spi.device.DeviceAssignmentType;
+import com.sitewhere.spi.common.request.IPersistentEntityCreateRequest;
+import com.sitewhere.spi.device.DeviceAssignmentStatus;
 
 /**
  * Interface for arguments needed to create a device assignment.
  * 
  * @author Derek
  */
-public interface IDeviceAssignmentCreateRequest {
+public interface IDeviceAssignmentCreateRequest extends IPersistentEntityCreateRequest {
 
     /**
-     * Get token for assignment. (Auto-assign if null).
+     * Get the device token.
      * 
      * @return
      */
-    public String getToken();
+    public String getDeviceToken();
 
     /**
-     * Get the unique device hardware id.
+     * Get token of customer if assigned.
      * 
      * @return
      */
-    public String getDeviceHardwareId();
+    public String getCustomerToken();
 
     /**
-     * Get assignment type.
+     * Get token of area if assigned.
      * 
      * @return
      */
-    public DeviceAssignmentType getAssignmentType();
+    public String getAreaToken();
 
     /**
-     * Get asset module id.
+     * Get token of asset if assigned.
      * 
      * @return
      */
-    public String getAssetModuleId();
+    public String getAssetToken();
 
     /**
-     * Get assigned asset id.
+     * Get the device assignment status.
      * 
      * @return
      */
-    public String getAssetId();
-
-    /**
-     * Get metadata values.
-     * 
-     * @return
-     */
-    public Map<String, String> getMetadata();
+    public DeviceAssignmentStatus getStatus();
 }

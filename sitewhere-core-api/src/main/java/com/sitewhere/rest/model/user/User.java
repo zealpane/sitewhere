@@ -15,7 +15,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.sitewhere.rest.model.common.MetadataProviderEntity;
+import com.sitewhere.rest.model.common.PersistentEntity;
 import com.sitewhere.rest.model.datatype.JsonDateSerializer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.user.AccountStatus;
@@ -27,7 +27,7 @@ import com.sitewhere.spi.user.IUser;
  * @author Derek Adams
  */
 @JsonInclude(Include.NON_NULL)
-public class User extends MetadataProviderEntity implements IUser, Serializable {
+public class User extends PersistentEntity implements IUser {
 
     /** For {@link Serializable} */
     private static final long serialVersionUID = -3322129570954465956L;
@@ -51,13 +51,12 @@ public class User extends MetadataProviderEntity implements IUser, Serializable 
     private AccountStatus status;
 
     /** List of granted authorities */
-    private List<String> authorities = new ArrayList<String>();
+    private List<String> authorities = new ArrayList<>();
 
     /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.user.IUser#getUsername()
      */
+    @Override
     public String getUsername() {
 	return username;
     }
@@ -67,10 +66,9 @@ public class User extends MetadataProviderEntity implements IUser, Serializable 
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.user.IUser#getHashedPassword()
      */
+    @Override
     public String getHashedPassword() {
 	return hashedPassword;
     }
@@ -80,10 +78,9 @@ public class User extends MetadataProviderEntity implements IUser, Serializable 
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.user.IUser#getFirstName()
      */
+    @Override
     public String getFirstName() {
 	return firstName;
     }
@@ -93,10 +90,9 @@ public class User extends MetadataProviderEntity implements IUser, Serializable 
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.user.IUser#getLastName()
      */
+    @Override
     public String getLastName() {
 	return lastName;
     }
@@ -106,10 +102,9 @@ public class User extends MetadataProviderEntity implements IUser, Serializable 
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.user.IUser#getLastLogin()
      */
+    @Override
     @JsonSerialize(using = JsonDateSerializer.class)
     public Date getLastLogin() {
 	return lastLogin;
@@ -120,10 +115,9 @@ public class User extends MetadataProviderEntity implements IUser, Serializable 
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.user.IUser#getStatus()
      */
+    @Override
     public AccountStatus getStatus() {
 	return status;
     }
@@ -133,10 +127,9 @@ public class User extends MetadataProviderEntity implements IUser, Serializable 
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.user.IUser#getAuthorities()
      */
+    @Override
     public List<String> getAuthorities() {
 	return authorities;
     }
@@ -160,7 +153,7 @@ public class User extends MetadataProviderEntity implements IUser, Serializable 
 	result.setLastLogin(input.getLastLogin());
 	result.setStatus(input.getStatus());
 	result.setAuthorities(new ArrayList<String>(input.getAuthorities()));
-	MetadataProviderEntity.copy(input, result);
+	PersistentEntity.copy(input, result);
 	return result;
     }
 }

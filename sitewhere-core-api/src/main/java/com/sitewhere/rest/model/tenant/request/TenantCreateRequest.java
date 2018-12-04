@@ -13,7 +13,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.sitewhere.rest.model.common.MetadataProvider;
+import com.sitewhere.rest.model.common.request.BrandedEntityCreateRequest;
 import com.sitewhere.spi.tenant.ITenant;
 import com.sitewhere.spi.tenant.request.ITenantCreateRequest;
 
@@ -24,13 +24,10 @@ import com.sitewhere.spi.tenant.request.ITenantCreateRequest;
  * @author Derek
  */
 @JsonInclude(Include.NON_NULL)
-public class TenantCreateRequest extends MetadataProvider implements ITenantCreateRequest {
+public class TenantCreateRequest extends BrandedEntityCreateRequest implements ITenantCreateRequest {
 
     /** Serial version UID */
     private static final long serialVersionUID = -5706275554835627264L;
-
-    /** Unique tenant id */
-    private String id;
 
     /** Tenant name */
     private String name;
@@ -38,33 +35,19 @@ public class TenantCreateRequest extends MetadataProvider implements ITenantCrea
     /** Device authentication token */
     private String authenticationToken;
 
-    /** Tenant logo URL */
-    private String logoUrl;
-
     /** List of users authorized for access */
     private List<String> authorizedUserIds;
 
     /** Tenant template id */
     private String tenantTemplateId;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.user.request.ITenantCreateRequest#getId()
-     */
-    public String getId() {
-	return id;
-    }
-
-    public void setId(String id) {
-	this.id = id;
-    }
+    /** Dataset template id */
+    private String datasetTemplateId;
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.user.request.ITenantCreateRequest#getName()
+     * @see com.sitewhere.spi.tenant.request.ITenantCreateRequest#getName()
      */
+    @Override
     public String getName() {
 	return name;
     }
@@ -74,11 +57,11 @@ public class TenantCreateRequest extends MetadataProvider implements ITenantCrea
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.user.request.ITenantCreateRequest#
-     * getAuthenticationToken()
+     * @see
+     * com.sitewhere.spi.tenant.request.ITenantCreateRequest#getAuthenticationToken(
+     * )
      */
+    @Override
     public String getAuthenticationToken() {
 	return authenticationToken;
     }
@@ -88,25 +71,10 @@ public class TenantCreateRequest extends MetadataProvider implements ITenantCrea
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.user.request.ITenantCreateRequest#getLogoUrl()
-     */
-    public String getLogoUrl() {
-	return logoUrl;
-    }
-
-    public void setLogoUrl(String logoUrl) {
-	this.logoUrl = logoUrl;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see
-     * com.sitewhere.spi.user.request.ITenantCreateRequest#getAuthorizedUserIds(
-     * )
+     * com.sitewhere.spi.tenant.request.ITenantCreateRequest#getAuthorizedUserIds()
      */
+    @Override
     public List<String> getAuthorizedUserIds() {
 	return authorizedUserIds;
     }
@@ -116,12 +84,10 @@ public class TenantCreateRequest extends MetadataProvider implements ITenantCrea
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see
-     * com.sitewhere.spi.tenant.request.ITenantCreateRequest#getTenantTemplateId
-     * ()
+     * com.sitewhere.spi.tenant.request.ITenantCreateRequest#getTenantTemplateId()
      */
+    @Override
     public String getTenantTemplateId() {
 	return tenantTemplateId;
     }
@@ -130,26 +96,42 @@ public class TenantCreateRequest extends MetadataProvider implements ITenantCrea
 	this.tenantTemplateId = tenantTemplateId;
     }
 
+    /*
+     * @see
+     * com.sitewhere.spi.tenant.request.ITenantCreateRequest#getDatasetTemplateId()
+     */
+    @Override
+    public String getDatasetTemplateId() {
+	return datasetTemplateId;
+    }
+
+    public void setDatasetTemplateId(String datasetTemplateId) {
+	this.datasetTemplateId = datasetTemplateId;
+    }
+
     public static class Builder {
 
 	/** Request being built */
 	private TenantCreateRequest request = new TenantCreateRequest();
 
-	public Builder(String id, String name, String authenticationToken, String logoUrl, String tenantTemplateId) {
-	    request.setId(id);
+	public Builder(String token, String name, String authenticationToken, String logoUrl, String tenantTemplateId,
+		String datasetTemplateId) {
+	    request.setToken(token);
 	    request.setName(name);
 	    request.setAuthenticationToken(authenticationToken);
-	    request.setLogoUrl(logoUrl);
+	    request.setImageUrl(logoUrl);
 	    request.setTenantTemplateId(tenantTemplateId);
+	    request.setDatasetTemplateId(datasetTemplateId);
 	}
 
 	public Builder(ITenant existing) {
-	    request.setId(existing.getId());
+	    request.setToken(existing.getToken());
 	    request.setName(existing.getName());
-	    request.setLogoUrl(existing.getLogoUrl());
+	    request.setImageUrl(existing.getImageUrl());
 	    request.setAuthenticationToken(existing.getAuthenticationToken());
 	    request.setAuthorizedUserIds(existing.getAuthorizedUserIds());
 	    request.setTenantTemplateId(existing.getTenantTemplateId());
+	    request.setDatasetTemplateId(existing.getDatasetTemplateId());
 	    request.setMetadata(existing.getMetadata());
 	}
 

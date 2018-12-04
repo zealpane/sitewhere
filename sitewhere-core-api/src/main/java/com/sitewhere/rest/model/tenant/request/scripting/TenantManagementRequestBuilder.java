@@ -9,7 +9,6 @@ package com.sitewhere.rest.model.tenant.request.scripting;
 
 import com.sitewhere.rest.model.tenant.request.TenantCreateRequest;
 import com.sitewhere.spi.SiteWhereException;
-import com.sitewhere.spi.configuration.IDefaultResourcePaths;
 import com.sitewhere.spi.tenant.ITenant;
 import com.sitewhere.spi.tenant.ITenantManagement;
 
@@ -20,6 +19,12 @@ import com.sitewhere.spi.tenant.ITenantManagement;
  */
 public class TenantManagementRequestBuilder {
 
+    /** Template that uses MongoDB for all persistence */
+    private static final String MONGODB_TENANT_TEMPLATE_NAME = "mongodb";
+
+    /** Template that does not load any data */
+    private static final String EMPTY_DATASET_TEMPLATE_NAME = "empty";
+
     /** Device management implementation */
     private ITenantManagement tenantManagement;
 
@@ -28,8 +33,8 @@ public class TenantManagementRequestBuilder {
     }
 
     /**
-     * Create builder for new tenant request. Assumes tenant uses the "empty"
-     * tenant template.
+     * Create builder for new tenant request. Assumes tenant uses the "empty" tenant
+     * template.
      * 
      * @param id
      * @param name
@@ -38,23 +43,26 @@ public class TenantManagementRequestBuilder {
      * @return
      */
     public TenantCreateRequest.Builder newTenant(String id, String name, String authenticationToken, String logoUrl) {
-	return newTenant(id, name, authenticationToken, logoUrl, IDefaultResourcePaths.EMPTY_TEMPLATE_NAME);
+	return newTenant(id, name, authenticationToken, logoUrl, MONGODB_TENANT_TEMPLATE_NAME,
+		EMPTY_DATASET_TEMPLATE_NAME);
     }
 
     /**
      * Create builder for new tenant request. Allows tenant template to be
      * specified.
      * 
-     * @param id
+     * @param token
      * @param name
      * @param authenticationToken
      * @param logoUrl
      * @param tenantTemplateId
+     * @param datasetTemplateId
      * @return
      */
-    public TenantCreateRequest.Builder newTenant(String id, String name, String authenticationToken, String logoUrl,
-	    String tenantTemplateId) {
-	return new TenantCreateRequest.Builder(id, name, authenticationToken, logoUrl, tenantTemplateId);
+    public TenantCreateRequest.Builder newTenant(String token, String name, String authenticationToken, String logoUrl,
+	    String tenantTemplateId, String datasetTemplateId) {
+	return new TenantCreateRequest.Builder(token, name, authenticationToken, logoUrl, tenantTemplateId,
+		datasetTemplateId);
     }
 
     /**
@@ -69,25 +77,25 @@ public class TenantManagementRequestBuilder {
     }
 
     /**
-     * Get tenant by unique id.
+     * Get tenant by token.
      * 
-     * @param id
+     * @param token
      * @return
      * @throws SiteWhereException
      */
-    public ITenant getTenant(String id) throws SiteWhereException {
-	return getTenantManagement().getTenantById(id);
+    public ITenant getTenantByToken(String token) throws SiteWhereException {
+	return getTenantManagement().getTenantByToken(token);
     }
 
     /**
-     * Indicates whether a tenant exists for the given id.
+     * Indicates whether a tenant exists for the given token.
      * 
      * @param id
      * @return
      * @throws SiteWhereException
      */
-    public boolean hasTenant(String id) throws SiteWhereException {
-	return getTenant(id) != null;
+    public boolean hasTenant(String token) throws SiteWhereException {
+	return getTenantByToken(token) != null;
     }
 
     public ITenantManagement getTenantManagement() {

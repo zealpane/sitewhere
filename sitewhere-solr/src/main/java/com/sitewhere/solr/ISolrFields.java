@@ -20,23 +20,29 @@ public interface ISolrFields {
     /** Event type indicator */
     public static final String EVENT_TYPE = "eventType";
 
+    /** Unique device identifier */
+    public static final String DEVICE_ID = "deviceId";
+
     /** Unique device assignment identifier */
-    public static final String ASSIGNMENT_TOKEN = "assignmentToken";
+    public static final String ASSIGNMENT_ID = "assignmentId";
 
-    /** Assignment type indicator */
-    public static final String ASSIGNMENT_TYPE = "assignmentType";
-
-    /** Asset identifier */
+    /** Unique asset identifier */
     public static final String ASSET_ID = "assetId";
 
-    /** Unique site identifier */
-    public static final String SITE_TOKEN = "siteToken";
+    /** Unique area identifier */
+    public static final String AREA_ID = "areaId";
 
     /** Event date */
     public static final String EVENT_DATE = "eventDate";
 
     /** Event received date */
     public static final String RECEIVED_DATE = "receivedDate";
+    
+    /** Measurement name */
+    public static final String MX_NAME = "mxName";
+    
+    /** Measurement value */
+    public static final String MX_VALUE = "mxValue";
 
     /** Location */
     public static final String LOCATION = "location";
@@ -58,7 +64,4 @@ public interface ISolrFields {
 
     /** Prefix for metadata fields */
     public static final String META_PREFIX = "meta.";
-
-    /** Location latitude */
-    public static final String MEASUREMENT_PREFIX = "mx.";
 }

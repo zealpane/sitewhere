@@ -7,47 +7,37 @@
  */
 package com.sitewhere.rest.model.device.request;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.sitewhere.rest.model.device.DeviceElementMapping;
-import com.sitewhere.spi.device.IDevice;
+import com.sitewhere.rest.model.common.request.PersistentEntityCreateRequest;
 import com.sitewhere.spi.device.IDeviceElementMapping;
 import com.sitewhere.spi.device.request.IDeviceCreateRequest;
 
 /**
- * Holds fields needed to create a new device.
+ * Fields needed to create/update a device.
  * 
  * @author Derek Adams
  */
 @JsonInclude(Include.NON_NULL)
-public class DeviceCreateRequest implements IDeviceCreateRequest, Serializable {
+public class DeviceCreateRequest extends PersistentEntityCreateRequest implements IDeviceCreateRequest {
 
     /** Serialization version identifier */
     private static final long serialVersionUID = 5102270168736590229L;
 
-    /** Hardware id for new device */
-    private String hardwareId;
+    /** Device type token */
+    private String deviceTypeToken;
 
-    /** Site token */
-    private String siteToken;
-
-    /** Device specification token */
-    private String specificationToken;
-
-    /** Parent hardware id (if nested) */
-    private String parentHardwareId;
+    /** Parent device token (if nested) */
+    private String parentDeviceToken;
 
     /** Indicates whether parent hardware id should be removed */
     private Boolean removeParentHardwareId;
 
     /** List of device element mappings */
-    private List<DeviceElementMapping> deviceElementMappings;
+    private List<? extends IDeviceElementMapping> deviceElementMappings;
 
     /** Comments */
     private String comments;
@@ -55,63 +45,30 @@ public class DeviceCreateRequest implements IDeviceCreateRequest, Serializable {
     /** Device status indicator */
     private String status;
 
-    /** Metadata values */
-    private Map<String, String> metadata;
-
     /*
-     * (non-Javadoc)
-     * 
      * @see
-     * com.sitewhere.spi.device.request.IDeviceCreateRequest#getHardwareId()
+     * com.sitewhere.spi.device.request.IDeviceCreateRequest#getDeviceTypeToken()
      */
-    public String getHardwareId() {
-	return hardwareId;
+    @Override
+    public String getDeviceTypeToken() {
+	return deviceTypeToken;
     }
 
-    public void setHardwareId(String hardwareId) {
-	this.hardwareId = hardwareId;
+    public void setDeviceTypeToken(String deviceTypeToken) {
+	this.deviceTypeToken = deviceTypeToken;
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.request.IDeviceCreateRequest#getSiteToken()
-     */
-    public String getSiteToken() {
-	return siteToken;
-    }
-
-    public void setSiteToken(String siteToken) {
-	this.siteToken = siteToken;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.request.IDeviceCreateRequest#
-     * getSpecificationToken()
-     */
-    public String getSpecificationToken() {
-	return specificationToken;
-    }
-
-    public void setSpecificationToken(String specificationToken) {
-	this.specificationToken = specificationToken;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see
-     * com.sitewhere.spi.device.request.IDeviceCreateRequest#getParentHardwareId
-     * ()
+     * com.sitewhere.spi.device.request.IDeviceCreateRequest#getParentDeviceToken()
      */
-    public String getParentHardwareId() {
-	return parentHardwareId;
+    @Override
+    public String getParentDeviceToken() {
+	return parentDeviceToken;
     }
 
-    public void setParentHardwareId(String parentHardwareId) {
-	this.parentHardwareId = parentHardwareId;
+    public void setParentDeviceToken(String parentDeviceToken) {
+	this.parentDeviceToken = parentDeviceToken;
     }
 
     /*
@@ -120,6 +77,7 @@ public class DeviceCreateRequest implements IDeviceCreateRequest, Serializable {
      * @see com.sitewhere.spi.device.request.IDeviceCreateRequest#
      * isRemoveParentHardwareId()
      */
+    @Override
     public Boolean isRemoveParentHardwareId() {
 	return removeParentHardwareId;
     }
@@ -129,17 +87,15 @@ public class DeviceCreateRequest implements IDeviceCreateRequest, Serializable {
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.device.request.IDeviceCreateRequest#
      * getDeviceElementMappings()
      */
-    @SuppressWarnings("unchecked")
-    public List<IDeviceElementMapping> getDeviceElementMappings() {
-	return (List<IDeviceElementMapping>) (List<? extends IDeviceElementMapping>) deviceElementMappings;
+    @Override
+    public List<? extends IDeviceElementMapping> getDeviceElementMappings() {
+	return deviceElementMappings;
     }
 
-    public void setDeviceElementMappings(List<DeviceElementMapping> deviceElementMappings) {
+    public void setDeviceElementMappings(List<? extends IDeviceElementMapping> deviceElementMappings) {
 	this.deviceElementMappings = deviceElementMappings;
     }
 
@@ -148,6 +104,7 @@ public class DeviceCreateRequest implements IDeviceCreateRequest, Serializable {
      * 
      * @see com.sitewhere.spi.device.request.IDeviceCreateRequest#getComments()
      */
+    @Override
     public String getComments() {
 	return comments;
     }
@@ -156,6 +113,10 @@ public class DeviceCreateRequest implements IDeviceCreateRequest, Serializable {
 	this.comments = comments;
     }
 
+    /*
+     * @see com.sitewhere.spi.device.request.IDeviceCreateRequest#getStatus()
+     */
+    @Override
     public String getStatus() {
 	return status;
     }
@@ -164,45 +125,14 @@ public class DeviceCreateRequest implements IDeviceCreateRequest, Serializable {
 	this.status = status;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.request.IDeviceCreateRequest#getMetadata()
-     */
-    public Map<String, String> getMetadata() {
-	return metadata;
-    }
-
-    public void setMetadata(Map<String, String> metadata) {
-	this.metadata = metadata;
-    }
-
     public static class Builder {
 
 	/** Request being built */
 	private DeviceCreateRequest request = new DeviceCreateRequest();
 
-	public Builder(IDevice api) {
-	    request.setSiteToken(api.getSiteToken());
-	    request.setSpecificationToken(api.getSpecificationToken());
-	    request.setHardwareId(api.getHardwareId());
-	    request.setStatus(api.getStatus());
-	    request.setComments(api.getComments());
-	    request.setParentHardwareId(api.getParentHardwareId());
-	    if (api.getDeviceElementMappings() != null) {
-		request.setDeviceElementMappings(new ArrayList<DeviceElementMapping>());
-		request.getDeviceElementMappings().addAll(api.getDeviceElementMappings());
-	    }
-	    if (api.getMetadata() != null) {
-		request.setMetadata(new HashMap<String, String>());
-		request.getMetadata().putAll(api.getMetadata());
-	    }
-	}
-
-	public Builder(String siteToken, String specificationToken, String hardwareId) {
-	    request.setSiteToken(siteToken);
-	    request.setSpecificationToken(specificationToken);
-	    request.setHardwareId(hardwareId);
+	public Builder(String deviceTypeToken, String token) {
+	    request.setDeviceTypeToken(deviceTypeToken);
+	    request.setToken(token);
 	    request.setStatus(null);
 	    request.setComments("");
 	}

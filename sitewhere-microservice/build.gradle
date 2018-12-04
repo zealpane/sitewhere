@@ -1,0 +1,38 @@
+description = 'SiteWhere Common Microservice Library'
+
+configurations {
+    compile.exclude module: 'spring-boot-autoconfigure'
+}
+
+dependencies {
+	compile ('org.springframework.boot:spring-boot-starter')
+	
+	// Should be removed after properties have been migrated.
+	compile ('org.springframework.boot:spring-boot-properties-migrator:2.0.0.RELEASE')
+	
+	compile project(':sitewhere-core')
+	compile project(':sitewhere-configuration')
+	
+	// GRPC model dependencies.
+	compile project(':sitewhere-grpc-client')
+	compile project(':sitewhere-grpc-tenant-management')
+	
+	// GRPC server components.
+	compile group: 'io.grpc', name: 'grpc-netty', version: "${rootProject.ext['grpc.version']}"
+    
+    // Tracing support
+    compile group: 'com.uber.jaeger', name: 'jaeger-core', version:'0.21.0'
+    
+    // Google Analytics
+	compile 'com.brsanthu:google-analytics-java:2.0.0'
+}
+
+// Publish jar.
+apply plugin: 'maven-publish'
+publishing {
+	publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+	}
+}

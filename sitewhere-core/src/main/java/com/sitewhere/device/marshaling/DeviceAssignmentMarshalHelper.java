@@ -7,26 +7,18 @@
  */
 package com.sitewhere.device.marshaling;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.sitewhere.SiteWhere;
-import com.sitewhere.rest.model.asset.HardwareAsset;
-import com.sitewhere.rest.model.asset.LocationAsset;
-import com.sitewhere.rest.model.asset.PersonAsset;
-import com.sitewhere.rest.model.common.MetadataProviderEntity;
-import com.sitewhere.rest.model.device.DeviceAssignment;
-import com.sitewhere.rest.model.device.DeviceAssignmentState;
-import com.sitewhere.rest.model.device.Site;
+import com.sitewhere.device.marshaling.invalid.InvalidAsset;
+import com.sitewhere.rest.model.common.PersistentEntity;
+import com.sitewhere.rest.model.device.marshaling.MarshaledDeviceAssignment;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.asset.IAsset;
-import com.sitewhere.spi.asset.IAssetModuleManager;
-import com.sitewhere.spi.device.DeviceAssignmentType;
+import com.sitewhere.spi.asset.IAssetManagement;
 import com.sitewhere.spi.device.IDevice;
 import com.sitewhere.spi.device.IDeviceAssignment;
 import com.sitewhere.spi.device.IDeviceManagement;
-import com.sitewhere.spi.device.ISite;
-import com.sitewhere.spi.tenant.ITenant;
 
 /**
  * Configurable helper class that allows DeviceAssignment model objects to be
@@ -37,10 +29,7 @@ import com.sitewhere.spi.tenant.ITenant;
 public class DeviceAssignmentMarshalHelper {
 
     /** Static logger instance */
-    private static Logger LOGGER = LogManager.getLogger();
-
-    /** Tenant */
-    private ITenant tenant;
+    private static Logger LOGGER = LoggerFactory.getLogger(DeviceAssignmentMarshalHelper.class);
 
     /** Indicates whether device asset information is to be included */
     private boolean includeAsset = true;
@@ -48,14 +37,23 @@ public class DeviceAssignmentMarshalHelper {
     /** Indicates whether to include device information */
     private boolean includeDevice = false;
 
-    /** Indicates whether to include site information */
-    private boolean includeSite = false;
+    /** Indicates whether to include customer information */
+    private boolean includeCustomer = true;
+
+    /** Indicates whether to include area information */
+    private boolean includeArea = true;
+
+    /** Indicates whether to include device type */
+    private boolean includeDeviceType = true;
+
+    /** Device management */
+    private IDeviceManagement deviceManagement;
 
     /** Used to control marshaling of devices */
     private DeviceMarshalHelper deviceHelper;
 
-    public DeviceAssignmentMarshalHelper(ITenant tenant) {
-	this.tenant = tenant;
+    public DeviceAssignmentMarshalHelper(IDeviceManagement deviceManagement) {
+	this.deviceManagement = deviceManagement;
     }
 
     /**
@@ -66,23 +64,18 @@ public class DeviceAssignmentMarshalHelper {
      * @return
      * @throws SiteWhereException
      */
-    public DeviceAssignment convert(IDeviceAssignment source, IAssetModuleManager manager) throws SiteWhereException {
-	DeviceAssignment result = new DeviceAssignment();
-	result.setToken(source.getToken());
+    public MarshaledDeviceAssignment convert(IDeviceAssignment source, IAssetManagement assetManagement)
+	    throws SiteWhereException {
+	MarshaledDeviceAssignment result = new MarshaledDeviceAssignment();
 	result.setActiveDate(source.getActiveDate());
 	result.setReleasedDate(source.getReleasedDate());
 	result.setStatus(source.getStatus());
-	result.setAssignmentType(source.getAssignmentType());
-	result.setAssetModuleId(source.getAssetModuleId());
-	result.setAssetId(source.getAssetId());
-	MetadataProviderEntity.copy(source, result);
-	if (source.getState() != null) {
-	    result.setState(DeviceAssignmentState.copy(source.getState()));
-	}
-	if (source.getAssignmentType() != DeviceAssignmentType.Unassociated) {
-	    IAsset asset = manager.getAssetById(source.getAssetModuleId(), source.getAssetId());
+	PersistentEntity.copy(source, result);
 
-	    // Handle case where referenced asset is not found.
+	// If asset is assigned, look it up.
+	result.setAssetId(source.getAssetId());
+	if (source.getAssetId() != null) {
+	    IAsset asset = assetManagement.getAsset(source.getAssetId());
 	    if (asset == null) {
 		LOGGER.warn("Device assignment has reference to non-existent asset.");
 		asset = new InvalidAsset();
@@ -90,40 +83,33 @@ public class DeviceAssignmentMarshalHelper {
 	    result.setAssetName(asset.getName());
 	    result.setAssetImageUrl(asset.getImageUrl());
 	    if (isIncludeAsset()) {
-		if (asset instanceof HardwareAsset) {
-		    result.setAssociatedHardware((HardwareAsset) asset);
-		} else if (asset instanceof PersonAsset) {
-		    result.setAssociatedPerson((PersonAsset) asset);
-		} else if (asset instanceof LocationAsset) {
-		    result.setAssociatedLocation((LocationAsset) asset);
-		}
+		result.setAsset(asset);
 	    }
 	}
-	result.setSiteToken(source.getSiteToken());
-	if (isIncludeSite()) {
-	    ISite site = getDeviceManagement().getSiteForAssignment(source);
-	    result.setSite(Site.copy(site));
+
+	// If customer is assigned, look it up.
+	result.setCustomerId(source.getCustomerId());
+	if ((isIncludeCustomer()) && (source.getCustomerId() != null)) {
+	    result.setCustomer(getDeviceManagement().getCustomer(source.getCustomerId()));
 	}
-	result.setDeviceHardwareId(source.getDeviceHardwareId());
+
+	// If area is assigned, look it up.
+	result.setAreaId(source.getAreaId());
+	if ((isIncludeArea()) && (source.getAreaId() != null)) {
+	    result.setArea(getDeviceManagement().getArea(source.getAreaId()));
+	}
+
+	// Add device information.
+	result.setDeviceId(source.getDeviceId());
 	if (isIncludeDevice()) {
-	    IDevice device = getDeviceManagement().getDeviceForAssignment(source);
+	    IDevice device = getDeviceManagement().getDevice(source.getDeviceId());
 	    if (device != null) {
-		result.setDevice(getDeviceHelper().convert(device, manager));
+		result.setDevice(getDeviceHelper().convert(device, assetManagement));
 	    } else {
-		LOGGER.error("Assignment references invalid hardware id.");
+		LOGGER.error("Assignment references invalid device id.");
 	    }
 	}
 	return result;
-    }
-
-    /**
-     * Get the device management implementation.
-     * 
-     * @return
-     * @throws SiteWhereException
-     */
-    protected IDeviceManagement getDeviceManagement() throws SiteWhereException {
-	return SiteWhere.getServer().getDeviceManagement(tenant);
     }
 
     /**
@@ -133,10 +119,9 @@ public class DeviceAssignmentMarshalHelper {
      */
     protected DeviceMarshalHelper getDeviceHelper() {
 	if (deviceHelper == null) {
-	    deviceHelper = new DeviceMarshalHelper(tenant);
-	    deviceHelper.setIncludeAsset(false);
+	    deviceHelper = new DeviceMarshalHelper(getDeviceManagement());
 	    deviceHelper.setIncludeAssignment(false);
-	    deviceHelper.setIncludeSpecification(false);
+	    deviceHelper.setIncludeDeviceType(isIncludeDeviceType());
 	}
 	return deviceHelper;
     }
@@ -159,12 +144,37 @@ public class DeviceAssignmentMarshalHelper {
 	return this;
     }
 
-    public boolean isIncludeSite() {
-	return includeSite;
+    public boolean isIncludeCustomer() {
+	return includeCustomer;
     }
 
-    public DeviceAssignmentMarshalHelper setIncludeSite(boolean includeSite) {
-	this.includeSite = includeSite;
+    public void setIncludeCustomer(boolean includeCustomer) {
+	this.includeCustomer = includeCustomer;
+    }
+
+    public boolean isIncludeArea() {
+	return includeArea;
+    }
+
+    public DeviceAssignmentMarshalHelper setIncludeArea(boolean includeArea) {
+	this.includeArea = includeArea;
 	return this;
+    }
+
+    public boolean isIncludeDeviceType() {
+	return includeDeviceType;
+    }
+
+    public DeviceAssignmentMarshalHelper setIncludeDeviceType(boolean includeDeviceType) {
+	this.includeDeviceType = includeDeviceType;
+	return this;
+    }
+
+    public IDeviceManagement getDeviceManagement() {
+	return deviceManagement;
+    }
+
+    public void setDeviceManagement(IDeviceManagement deviceManagement) {
+	this.deviceManagement = deviceManagement;
     }
 }

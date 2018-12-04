@@ -8,35 +8,16 @@
 package com.sitewhere.spi.device.request;
 
 import java.util.List;
-import java.util.Map;
+
+import com.sitewhere.spi.common.IAccessible;
+import com.sitewhere.spi.common.request.IBrandedEntityCreateRequest;
 
 /**
  * Interface for arguments needed to create a device group.
  * 
  * @author Derek
  */
-public interface IDeviceGroupCreateRequest {
-
-    /**
-     * Get the unique token.
-     * 
-     * @return
-     */
-    public String getToken();
-
-    /**
-     * Get the group name.
-     * 
-     * @return
-     */
-    public String getName();
-
-    /**
-     * Get the group description.
-     * 
-     * @return
-     */
-    public String getDescription();
+public interface IDeviceGroupCreateRequest extends IAccessible, IBrandedEntityCreateRequest {
 
     /**
      * Get list of roles associated with group.
@@ -44,11 +25,4 @@ public interface IDeviceGroupCreateRequest {
      * @return
      */
     public List<String> getRoles();
-
-    /**
-     * Get metadata values.
-     * 
-     * @return
-     */
-    public Map<String, String> getMetadata();
 }

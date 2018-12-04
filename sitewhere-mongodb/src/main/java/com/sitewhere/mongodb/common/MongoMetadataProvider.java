@@ -9,7 +9,6 @@ package com.sitewhere.mongodb.common;
 
 import org.bson.Document;
 
-import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.common.IMetadataProvider;
 
 /**
@@ -20,7 +19,7 @@ import com.sitewhere.spi.common.IMetadataProvider;
 public class MongoMetadataProvider {
 
     /** Property for entity metadata */
-    public static final String PROP_METADATA = "metadata";
+    public static final String PROP_METADATA = "meta";
 
     /**
      * Store data into a {@link Document} using default property name.
@@ -42,7 +41,7 @@ public class MongoMetadataProvider {
     public static void toDocument(String propertyName, IMetadataProvider source, Document target) {
 	Document metadata = new Document();
 	for (String key : source.getMetadata().keySet()) {
-	    metadata.put(key, source.getMetadata(key));
+	    metadata.put(key, source.getMetadata().get(key));
 	}
 	target.put(propertyName, metadata);
     }
@@ -68,11 +67,7 @@ public class MongoMetadataProvider {
 	Document metadata = (Document) source.get(propertyName);
 	if (metadata != null) {
 	    for (String key : metadata.keySet()) {
-		try {
-		    target.addOrReplaceMetadata(key, (String) metadata.get(key));
-		} catch (SiteWhereException e) {
-		    // Skip field if key is invalid in the database.
-		}
+		target.getMetadata().put(key, (String) metadata.get(key));
 	    }
 	}
     }

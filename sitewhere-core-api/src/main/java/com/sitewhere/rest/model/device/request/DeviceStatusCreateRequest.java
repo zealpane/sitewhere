@@ -1,6 +1,13 @@
+/*
+ * Copyright (c) SiteWhere, LLC. All rights reserved. http://www.sitewhere.com
+ *
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package com.sitewhere.rest.model.device.request;
 
-import com.sitewhere.rest.model.common.MetadataProvider;
+import com.sitewhere.rest.model.common.request.PersistentEntityCreateRequest;
 import com.sitewhere.spi.device.request.IDeviceStatusCreateRequest;
 
 /**
@@ -8,16 +15,16 @@ import com.sitewhere.spi.device.request.IDeviceStatusCreateRequest;
  * 
  * @author Derek
  */
-public class DeviceStatusCreateRequest extends MetadataProvider implements IDeviceStatusCreateRequest {
+public class DeviceStatusCreateRequest extends PersistentEntityCreateRequest implements IDeviceStatusCreateRequest {
 
     /** Serial version UID */
     private static final long serialVersionUID = -1667891345754538713L;
 
+    /** Token for device type */
+    private String deviceTypeToken;
+
     /** Status code */
     private String code;
-
-    /** Specification token */
-    private String specificationToken;
 
     /** Display name */
     private String name;
@@ -35,11 +42,24 @@ public class DeviceStatusCreateRequest extends MetadataProvider implements IDevi
     private String icon;
 
     /*
+     * @see com.sitewhere.spi.device.request.IDeviceStatusCreateRequest#
+     * getDeviceTypeToken()
+     */
+    @Override
+    public String getDeviceTypeToken() {
+	return deviceTypeToken;
+    }
+
+    public void setDeviceTypeToken(String deviceTypeToken) {
+	this.deviceTypeToken = deviceTypeToken;
+    }
+
+    /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.sitewhere.spi.device.request.IDeviceStatusCreateRequest#getCode()
+     * @see com.sitewhere.spi.device.request.IDeviceStatusCreateRequest#getCode()
      */
+    @Override
     public String getCode() {
 	return code;
     }
@@ -51,23 +71,9 @@ public class DeviceStatusCreateRequest extends MetadataProvider implements IDevi
     /*
      * (non-Javadoc)
      * 
-     * @see com.sitewhere.spi.device.request.IDeviceStatusCreateRequest#
-     * getSpecificationToken()
+     * @see com.sitewhere.spi.device.request.IDeviceStatusCreateRequest#getName()
      */
-    public String getSpecificationToken() {
-	return specificationToken;
-    }
-
-    public void setSpecificationToken(String specificationToken) {
-	this.specificationToken = specificationToken;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.sitewhere.spi.device.request.IDeviceStatusCreateRequest#getName()
-     */
+    @Override
     public String getName() {
 	return name;
     }
@@ -82,6 +88,7 @@ public class DeviceStatusCreateRequest extends MetadataProvider implements IDevi
      * @see com.sitewhere.spi.device.request.IDeviceStatusCreateRequest#
      * getBackgroundColor()
      */
+    @Override
     public String getBackgroundColor() {
 	return backgroundColor;
     }
@@ -96,6 +103,7 @@ public class DeviceStatusCreateRequest extends MetadataProvider implements IDevi
      * @see com.sitewhere.spi.device.request.IDeviceStatusCreateRequest#
      * getForegroundColor()
      */
+    @Override
     public String getForegroundColor() {
 	return foregroundColor;
     }
@@ -110,6 +118,7 @@ public class DeviceStatusCreateRequest extends MetadataProvider implements IDevi
      * @see com.sitewhere.spi.device.request.IDeviceStatusCreateRequest#
      * getBorderColor()
      */
+    @Override
     public String getBorderColor() {
 	return borderColor;
     }
@@ -121,9 +130,9 @@ public class DeviceStatusCreateRequest extends MetadataProvider implements IDevi
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.sitewhere.spi.device.request.IDeviceStatusCreateRequest#getIcon()
+     * @see com.sitewhere.spi.device.request.IDeviceStatusCreateRequest#getIcon()
      */
+    @Override
     public String getIcon() {
 	return icon;
     }

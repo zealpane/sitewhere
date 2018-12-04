@@ -8,10 +8,10 @@
 package com.sitewhere.rest.model.asset.request;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.sitewhere.rest.model.common.request.BrandedEntityCreateRequest;
 import com.sitewhere.spi.asset.request.IAssetCreateRequest;
 
 /**
@@ -20,41 +20,33 @@ import com.sitewhere.spi.asset.request.IAssetCreateRequest;
  * @author Derek
  */
 @JsonInclude(Include.NON_NULL)
-public class AssetCreateRequest implements IAssetCreateRequest {
+public class AssetCreateRequest extends BrandedEntityCreateRequest implements IAssetCreateRequest {
 
     /** Serial version UID */
     private static final long serialVersionUID = -3557255561907642778L;
 
-    /** Asset id */
-    private String id;
+    /** Asset type token */
+    private String assetTypeToken;
 
     /** Asset name */
     private String name;
 
-    /** URL pointing to asset image */
-    private String imageUrl;
-
-    /** Asset properties */
-    private Map<String, String> properties = new HashMap<String, String>();
-
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.asset.request.IAssetCreateRequest#getId()
+     * @see com.sitewhere.spi.asset.request.IAssetCreateRequest#getAssetTypeToken()
      */
-    public String getId() {
-	return id;
+    @Override
+    public String getAssetTypeToken() {
+	return assetTypeToken;
     }
 
-    public void setId(String id) {
-	this.id = id;
+    public void setAssetTypeToken(String assetTypeToken) {
+	this.assetTypeToken = assetTypeToken;
     }
 
     /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.asset.request.IAssetCreateRequest#getName()
      */
+    @Override
     public String getName() {
 	return name;
     }
@@ -63,29 +55,32 @@ public class AssetCreateRequest implements IAssetCreateRequest {
 	this.name = name;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.asset.request.IAssetCreateRequest#getImageUrl()
-     */
-    public String getImageUrl() {
-	return imageUrl;
-    }
+    public static class Builder {
 
-    public void setImageUrl(String imageUrl) {
-	this.imageUrl = imageUrl;
-    }
+	/** Request being built */
+	private AssetCreateRequest request = new AssetCreateRequest();
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.asset.request.IAssetCreateRequest#getProperties()
-     */
-    public Map<String, String> getProperties() {
-	return properties;
-    }
+	public Builder(String token, String assetTypeToken, String name) {
+	    request.setToken(token);
+	    request.setAssetTypeToken(assetTypeToken);
+	    request.setName(name);
+	}
 
-    public void setProperties(Map<String, String> properties) {
-	this.properties = properties;
+	public Builder withImageUrl(String imageUrl) {
+	    request.setImageUrl(imageUrl);
+	    return this;
+	}
+
+	public Builder metadata(String name, String value) {
+	    if (request.getMetadata() == null) {
+		request.setMetadata(new HashMap<String, String>());
+	    }
+	    request.getMetadata().put(name, value);
+	    return this;
+	}
+
+	public AssetCreateRequest build() {
+	    return request;
+	}
     }
 }

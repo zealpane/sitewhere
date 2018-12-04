@@ -7,11 +7,11 @@
  */
 package com.sitewhere.rest.model.device.command;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
-import com.sitewhere.rest.model.common.MetadataProviderEntity;
+import com.sitewhere.rest.model.common.PersistentEntity;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.device.command.ICommandParameter;
 import com.sitewhere.spi.device.command.IDeviceCommand;
@@ -21,16 +21,13 @@ import com.sitewhere.spi.device.command.IDeviceCommand;
  * 
  * @author Derek
  */
-public class DeviceCommand extends MetadataProviderEntity implements IDeviceCommand, Serializable {
+public class DeviceCommand extends PersistentEntity implements IDeviceCommand {
 
     /** For Java serialization */
     private static final long serialVersionUID = -9098150828821813365L;
 
-    /** Unique token for command */
-    private String token;
-
-    /** Token for parent specification */
-    private String specificationToken;
+    /** Unique id for parent specification */
+    private UUID deviceTypeId;
 
     /** Command namespace */
     private String namespace;
@@ -45,32 +42,15 @@ public class DeviceCommand extends MetadataProviderEntity implements IDeviceComm
     private List<CommandParameter> parameters = new ArrayList<CommandParameter>();
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.command.IDeviceCommand#getToken()
+     * @see com.sitewhere.spi.device.command.IDeviceCommand#getDeviceTypeId()
      */
     @Override
-    public String getToken() {
-	return token;
+    public UUID getDeviceTypeId() {
+	return deviceTypeId;
     }
 
-    public void setToken(String token) {
-	this.token = token;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.sitewhere.spi.device.command.IDeviceCommand#getSpecificationToken()
-     */
-    @Override
-    public String getSpecificationToken() {
-	return specificationToken;
-    }
-
-    public void setSpecificationToken(String specificationToken) {
-	this.specificationToken = specificationToken;
+    public void setDeviceTypeId(UUID deviceTypeId) {
+	this.deviceTypeId = deviceTypeId;
     }
 
     /*
@@ -138,9 +118,10 @@ public class DeviceCommand extends MetadataProviderEntity implements IDeviceComm
      */
     public static DeviceCommand copy(IDeviceCommand input) throws SiteWhereException {
 	DeviceCommand result = new DeviceCommand();
-	MetadataProviderEntity.copy(input, result);
+	PersistentEntity.copy(input, result);
+	result.setId(input.getId());
 	result.setToken(input.getToken());
-	result.setSpecificationToken(input.getSpecificationToken());
+	result.setDeviceTypeId(input.getDeviceTypeId());
 	result.setName(input.getName());
 	result.setNamespace(input.getNamespace());
 	result.setDescription(input.getDescription());

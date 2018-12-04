@@ -7,13 +7,13 @@
  */
 package com.sitewhere.rest.model.device;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.sitewhere.rest.model.common.MetadataProviderEntity;
+import com.sitewhere.rest.model.common.PersistentEntity;
 import com.sitewhere.spi.device.IDevice;
 import com.sitewhere.spi.device.IDeviceElementMapping;
 import com.sitewhere.spi.device.element.IDeviceElementSchema;
@@ -24,22 +24,19 @@ import com.sitewhere.spi.device.element.IDeviceElementSchema;
  * @author dadams
  */
 @JsonInclude(Include.NON_NULL)
-public class Device extends MetadataProviderEntity implements IDevice, Serializable {
+public class Device extends PersistentEntity implements IDevice {
 
     /** Serialization version identifier */
-    private static final long serialVersionUID = 5558679468461313408L;
+    private static final long serialVersionUID = -5409798557113797549L;
 
-    /** Unique hardware id for device */
-    private String hardwareId;
+    /** Device type id */
+    private UUID deviceTypeId;
 
-    /** Site token */
-    private String siteToken;
+    /** Id for current assignment if assigned */
+    private UUID deviceAssignmentId;
 
-    /** Specification token */
-    private String specificationToken;
-
-    /** Parent hardware id (if nested) */
-    private String parentHardwareId;
+    /** Parent device id (if nested) */
+    private UUID parentDeviceId;
 
     /** Mappings of {@link IDeviceElementSchema} paths to hardware ids */
     private List<DeviceElementMapping> deviceElementMappings = new ArrayList<DeviceElementMapping>();
@@ -50,79 +47,40 @@ public class Device extends MetadataProviderEntity implements IDevice, Serializa
     /** Status indicator */
     private String status;
 
-    /** Token for current assignment */
-    private String assignmentToken;
-
-    /** FIELDS BELOW DEPEND ON MARSHALING PARAMETERS */
-
-    /** Device specification */
-    private DeviceSpecification specification;
-
-    /** Current device assignment */
-    private DeviceAssignment assignment;
-
-    /** Current site deployment */
-    private Site site;
-
-    /** Asset id from device specification (only for marshaling) */
-    private String assetId;
-
-    /** Asset name from device specification (only for marshaling) */
-    private String assetName;
-
-    /** Asset image url from device specification (only for marshaling) */
-    private String assetImageUrl;
-
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.IDevice#getHardwareId()
+     * @see com.sitewhere.spi.device.IDevice#getDeviceTypeId()
      */
-    public String getHardwareId() {
-	return hardwareId;
+    @Override
+    public UUID getDeviceTypeId() {
+	return deviceTypeId;
     }
 
-    public void setHardwareId(String hardwareId) {
-	this.hardwareId = hardwareId;
+    public void setDeviceTypeId(UUID deviceTypeId) {
+	this.deviceTypeId = deviceTypeId;
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.IDevice#getSiteToken()
+     * @see com.sitewhere.spi.device.IDevice#getDeviceAssignmentId()
      */
-    public String getSiteToken() {
-	return siteToken;
+    @Override
+    public UUID getDeviceAssignmentId() {
+	return deviceAssignmentId;
     }
 
-    public void setSiteToken(String siteToken) {
-	this.siteToken = siteToken;
+    public void setDeviceAssignmentId(UUID deviceAssignmentId) {
+	this.deviceAssignmentId = deviceAssignmentId;
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.IDevice#getSpecificationToken()
+     * @see com.sitewhere.spi.device.IDevice#getParentDeviceId()
      */
-    public String getSpecificationToken() {
-	return specificationToken;
+    @Override
+    public UUID getParentDeviceId() {
+	return parentDeviceId;
     }
 
-    public void setSpecificationToken(String specificationToken) {
-	this.specificationToken = specificationToken;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.IDevice#getParentHardwareId()
-     */
-    public String getParentHardwareId() {
-	return parentHardwareId;
-    }
-
-    public void setParentHardwareId(String parentHardwareId) {
-	this.parentHardwareId = parentHardwareId;
+    public void setParentDeviceId(UUID parentDeviceId) {
+	this.parentDeviceId = parentDeviceId;
     }
 
     /*
@@ -130,6 +88,7 @@ public class Device extends MetadataProviderEntity implements IDevice, Serializa
      * 
      * @see com.sitewhere.spi.device.IDevice#getDeviceElementMappings()
      */
+    @Override
     @SuppressWarnings("unchecked")
     public List<IDeviceElementMapping> getDeviceElementMappings() {
 	return (List<IDeviceElementMapping>) (List<? extends IDeviceElementMapping>) deviceElementMappings;
@@ -144,6 +103,7 @@ public class Device extends MetadataProviderEntity implements IDevice, Serializa
      * 
      * @see com.sitewhere.spi.device.IDevice#getComments()
      */
+    @Override
     public String getComments() {
 	return comments;
     }
@@ -157,72 +117,12 @@ public class Device extends MetadataProviderEntity implements IDevice, Serializa
      * 
      * @see com.sitewhere.spi.device.IDevice#getStatus()
      */
+    @Override
     public String getStatus() {
 	return status;
     }
 
     public void setStatus(String status) {
 	this.status = status;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.IDevice#getAssignmentToken()
-     */
-    public String getAssignmentToken() {
-	return assignmentToken;
-    }
-
-    public void setAssignmentToken(String assignmentToken) {
-	this.assignmentToken = assignmentToken;
-    }
-
-    public DeviceSpecification getSpecification() {
-	return specification;
-    }
-
-    public void setSpecification(DeviceSpecification specification) {
-	this.specification = specification;
-    }
-
-    public DeviceAssignment getAssignment() {
-	return assignment;
-    }
-
-    public void setAssignment(DeviceAssignment assignment) {
-	this.assignment = assignment;
-    }
-
-    public Site getSite() {
-	return site;
-    }
-
-    public void setSite(Site site) {
-	this.site = site;
-    }
-
-    public String getAssetId() {
-	return assetId;
-    }
-
-    public void setAssetId(String assetId) {
-	this.assetId = assetId;
-    }
-
-    public String getAssetName() {
-	return assetName;
-    }
-
-    public void setAssetName(String assetName) {
-	this.assetName = assetName;
-    }
-
-    public String getAssetImageUrl() {
-	return assetImageUrl;
-    }
-
-    public void setAssetImageUrl(String assetImageUrl) {
-	this.assetImageUrl = assetImageUrl;
     }
 }

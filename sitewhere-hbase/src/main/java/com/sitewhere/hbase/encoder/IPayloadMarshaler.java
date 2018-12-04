@@ -7,56 +7,48 @@
  */
 package com.sitewhere.hbase.encoder;
 
-import com.sitewhere.rest.model.asset.AssetCategory;
-import com.sitewhere.rest.model.asset.HardwareAsset;
-import com.sitewhere.rest.model.asset.LocationAsset;
-import com.sitewhere.rest.model.asset.PersonAsset;
+import com.sitewhere.rest.model.area.Area;
+import com.sitewhere.rest.model.area.Zone;
+import com.sitewhere.rest.model.batch.BatchElement;
+import com.sitewhere.rest.model.batch.BatchOperation;
 import com.sitewhere.rest.model.device.Device;
 import com.sitewhere.rest.model.device.DeviceAssignment;
-import com.sitewhere.rest.model.device.DeviceAssignmentState;
-import com.sitewhere.rest.model.device.DeviceSpecification;
-import com.sitewhere.rest.model.device.Site;
-import com.sitewhere.rest.model.device.Zone;
-import com.sitewhere.rest.model.device.batch.BatchElement;
-import com.sitewhere.rest.model.device.batch.BatchOperation;
+import com.sitewhere.rest.model.device.DeviceType;
 import com.sitewhere.rest.model.device.command.DeviceCommand;
 import com.sitewhere.rest.model.device.event.DeviceAlert;
 import com.sitewhere.rest.model.device.event.DeviceCommandInvocation;
 import com.sitewhere.rest.model.device.event.DeviceCommandResponse;
 import com.sitewhere.rest.model.device.event.DeviceLocation;
-import com.sitewhere.rest.model.device.event.DeviceMeasurements;
+import com.sitewhere.rest.model.device.event.DeviceMeasurement;
 import com.sitewhere.rest.model.device.event.DeviceStateChange;
-import com.sitewhere.rest.model.device.event.DeviceStreamData;
 import com.sitewhere.rest.model.device.group.DeviceGroup;
 import com.sitewhere.rest.model.device.group.DeviceGroupElement;
+import com.sitewhere.rest.model.device.state.DeviceState;
 import com.sitewhere.rest.model.device.streaming.DeviceStream;
+import com.sitewhere.rest.model.device.streaming.DeviceStreamData;
 import com.sitewhere.rest.model.tenant.Tenant;
 import com.sitewhere.rest.model.user.GrantedAuthority;
 import com.sitewhere.rest.model.user.User;
 import com.sitewhere.spi.SiteWhereException;
-import com.sitewhere.spi.asset.IAssetCategory;
-import com.sitewhere.spi.asset.IHardwareAsset;
-import com.sitewhere.spi.asset.ILocationAsset;
-import com.sitewhere.spi.asset.IPersonAsset;
+import com.sitewhere.spi.area.IArea;
+import com.sitewhere.spi.area.IZone;
+import com.sitewhere.spi.batch.IBatchElement;
+import com.sitewhere.spi.batch.IBatchOperation;
 import com.sitewhere.spi.device.IDevice;
 import com.sitewhere.spi.device.IDeviceAssignment;
-import com.sitewhere.spi.device.IDeviceAssignmentState;
-import com.sitewhere.spi.device.IDeviceSpecification;
-import com.sitewhere.spi.device.ISite;
-import com.sitewhere.spi.device.IZone;
-import com.sitewhere.spi.device.batch.IBatchElement;
-import com.sitewhere.spi.device.batch.IBatchOperation;
+import com.sitewhere.spi.device.IDeviceType;
 import com.sitewhere.spi.device.command.IDeviceCommand;
 import com.sitewhere.spi.device.event.IDeviceAlert;
 import com.sitewhere.spi.device.event.IDeviceCommandInvocation;
 import com.sitewhere.spi.device.event.IDeviceCommandResponse;
 import com.sitewhere.spi.device.event.IDeviceLocation;
-import com.sitewhere.spi.device.event.IDeviceMeasurements;
+import com.sitewhere.spi.device.event.IDeviceMeasurement;
 import com.sitewhere.spi.device.event.IDeviceStateChange;
-import com.sitewhere.spi.device.event.IDeviceStreamData;
 import com.sitewhere.spi.device.group.IDeviceGroup;
 import com.sitewhere.spi.device.group.IDeviceGroupElement;
+import com.sitewhere.spi.device.state.IDeviceState;
 import com.sitewhere.spi.device.streaming.IDeviceStream;
+import com.sitewhere.spi.device.streaming.IDeviceStreamData;
 import com.sitewhere.spi.tenant.ITenant;
 import com.sitewhere.spi.user.IGrantedAuthority;
 import com.sitewhere.spi.user.IUser;
@@ -96,22 +88,22 @@ public interface IPayloadMarshaler {
     public <T> T decode(byte[] payload, Class<T> type) throws SiteWhereException;
 
     /**
-     * Encode an {@link ISite}.
+     * Encode an {@link IArea}.
      * 
      * @param site
      * @return
      * @throws SiteWhereException
      */
-    public byte[] encodeSite(ISite site) throws SiteWhereException;
+    public byte[] encodeArea(IArea area) throws SiteWhereException;
 
     /**
-     * Decode a {@link Site} from the binary payload.
+     * Decode an {@link Area} from the binary payload.
      * 
      * @param payload
      * @return
      * @throws SiteWhereException
      */
-    public Site decodeSite(byte[] payload) throws SiteWhereException;
+    public Area decodeArea(byte[] payload) throws SiteWhereException;
 
     /**
      * Encode an {@link IZone}.
@@ -132,22 +124,22 @@ public interface IPayloadMarshaler {
     public Zone decodeZone(byte[] payload) throws SiteWhereException;
 
     /**
-     * Encode an {@link IDeviceSpecification}.
+     * Encode an {@link IDeviceType}.
      * 
-     * @param specification
+     * @param deviceType
      * @return
      * @throws SiteWhereException
      */
-    public byte[] encodeDeviceSpecification(IDeviceSpecification specification) throws SiteWhereException;
+    public byte[] encodeDeviceType(IDeviceType deviceType) throws SiteWhereException;
 
     /**
-     * Decode a {@link DeviceSpecification} from the binary payload.
+     * Decode a {@link DeviceType} from the binary payload.
      * 
      * @param payload
      * @return
      * @throws SiteWhereException
      */
-    public DeviceSpecification decodeDeviceSpecification(byte[] payload) throws SiteWhereException;
+    public DeviceType decodeDeviceType(byte[] payload) throws SiteWhereException;
 
     /**
      * Encode an {@link IDevice}.
@@ -204,40 +196,40 @@ public interface IPayloadMarshaler {
     public DeviceStream decodeDeviceStream(byte[] payload) throws SiteWhereException;
 
     /**
-     * Encode an {@link IDeviceAssignmentState}.
+     * Encode an {@link IDeviceState}.
      * 
      * @param state
      * @return
      * @throws SiteWhereException
      */
-    public byte[] encodeDeviceAssignmentState(IDeviceAssignmentState state) throws SiteWhereException;
+    public byte[] encodeDeviceAssignmentState(IDeviceState state) throws SiteWhereException;
 
     /**
-     * Decode a {@link DeviceAssignmentState} from the binary payload.
+     * Decode a {@link DeviceState} from the binary payload.
      * 
      * @param payload
      * @return
      * @throws SiteWhereException
      */
-    public DeviceAssignmentState decodeDeviceAssignmentState(byte[] payload) throws SiteWhereException;
+    public DeviceState decodeDeviceAssignmentState(byte[] payload) throws SiteWhereException;
 
     /**
-     * Encode an {@link IDeviceMeasurements}.
+     * Encode an {@link IDeviceMeasurement}.
      * 
      * @param measurements
      * @return
      * @throws SiteWhereException
      */
-    public byte[] encodeDeviceMeasurements(IDeviceMeasurements measurements) throws SiteWhereException;
+    public byte[] encodeDeviceMeasurements(IDeviceMeasurement measurements) throws SiteWhereException;
 
     /**
-     * Decode a {@link DeviceMeasurements} from the binary payload.
+     * Decode a {@link DeviceMeasurement} from the binary payload.
      * 
      * @param payload
      * @return
      * @throws SiteWhereException
      */
-    public DeviceMeasurements decodeDeviceMeasurements(byte[] payload) throws SiteWhereException;
+    public DeviceMeasurement decodeDeviceMeasurements(byte[] payload) throws SiteWhereException;
 
     /**
      * Encode an {@link IDeviceLocation}.
@@ -472,78 +464,6 @@ public interface IPayloadMarshaler {
      * @throws SiteWhereException
      */
     public GrantedAuthority decodeGrantedAuthority(byte[] payload) throws SiteWhereException;
-
-    /**
-     * Encode an {@link IAssetCategory}.
-     * 
-     * @param category
-     * @return
-     * @throws SiteWhereException
-     */
-    public byte[] encodeAssetCategory(IAssetCategory category) throws SiteWhereException;
-
-    /**
-     * Decode an {@link IAssetCategory} from the binary payload.
-     * 
-     * @param payload
-     * @return
-     * @throws SiteWhereException
-     */
-    public AssetCategory decodeAssetCategory(byte[] payload) throws SiteWhereException;
-
-    /**
-     * Encode an {@link IPersonAsset}.
-     * 
-     * @param asset
-     * @return
-     * @throws SiteWhereException
-     */
-    public byte[] encodePersonAsset(IPersonAsset asset) throws SiteWhereException;
-
-    /**
-     * Decode a {@link PersonAsset}.
-     * 
-     * @param payload
-     * @return
-     * @throws SiteWhereException
-     */
-    public PersonAsset decodePersonAsset(byte[] payload) throws SiteWhereException;
-
-    /**
-     * Encode an {@link IHardwareAsset}.
-     * 
-     * @param asset
-     * @return
-     * @throws SiteWhereException
-     */
-    public byte[] encodeHardwareAsset(IHardwareAsset asset) throws SiteWhereException;
-
-    /**
-     * Decode a {@link HardwareAsset}.
-     * 
-     * @param payload
-     * @return
-     * @throws SiteWhereException
-     */
-    public HardwareAsset decodeHardwareAsset(byte[] payload) throws SiteWhereException;
-
-    /**
-     * Encode an {@link ILocationAsset}.
-     * 
-     * @param asset
-     * @return
-     * @throws SiteWhereException
-     */
-    public byte[] encodeLocationAsset(ILocationAsset asset) throws SiteWhereException;
-
-    /**
-     * Decode a {@link LocationAsset}.
-     * 
-     * @param payload
-     * @return
-     * @throws SiteWhereException
-     */
-    public LocationAsset decodeLocationAsset(byte[] payload) throws SiteWhereException;
 
     /**
      * Encode an {@link ITenant}.

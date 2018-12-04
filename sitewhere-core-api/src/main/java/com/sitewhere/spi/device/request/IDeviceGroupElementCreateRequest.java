@@ -9,8 +9,6 @@ package com.sitewhere.spi.device.request;
 
 import java.util.List;
 
-import com.sitewhere.spi.device.group.GroupElementType;
-
 /**
  * Interface for arguments needed to create a device group element.
  * 
@@ -19,18 +17,18 @@ import com.sitewhere.spi.device.group.GroupElementType;
 public interface IDeviceGroupElementCreateRequest {
 
     /**
-     * Get the element type.
+     * Get device token (null if nested group supplied).
      * 
      * @return
      */
-    public GroupElementType getType();
+    public String getDeviceToken();
 
     /**
-     * Get the element id (relative to element type).
+     * Get nested group token (null if device supplied).
      * 
      * @return
      */
-    public String getElementId();
+    public String getNestedGroupToken();
 
     /**
      * Get list of roles associated with element.

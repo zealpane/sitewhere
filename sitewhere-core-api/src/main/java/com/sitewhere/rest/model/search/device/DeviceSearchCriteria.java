@@ -20,54 +20,36 @@ import com.sitewhere.spi.search.device.IDeviceSearchCriteria;
 public class DeviceSearchCriteria extends DateRangeSearchCriteria implements IDeviceSearchCriteria {
 
     /** Search criteria for getting all records */
-    public static DeviceSearchCriteria ALL = new DeviceSearchCriteria(null, null, false, 1, 0, null, null);
+    public static DeviceSearchCriteria ALL = new DeviceSearchCriteria(null, false, 1, 0, null, null);
 
-    /** Specification to match in filter */
-    private String specificationToken;
-
-    /** Site to match in filter */
-    private String siteToken;
+    /** Device type to match in filter */
+    private String deviceTypeToken;
 
     /** Indicates if assigned devices should be excluded */
-    private boolean excludeAssigned = true;
+    private boolean excludeAssigned = false;
 
     public DeviceSearchCriteria(int pageNumber, int pageSize, Date startDate, Date endDate) {
 	super(pageNumber, pageSize, startDate, endDate);
     }
 
-    public DeviceSearchCriteria(String specToken, String siteToken, boolean excludeAssigned, int pageNumber,
-	    int pageSize, Date startDate, Date endDate) {
+    public DeviceSearchCriteria(String deviceTypeToken, boolean excludeAssigned, int pageNumber, int pageSize,
+	    Date startDate, Date endDate) {
 	super(pageNumber, pageSize, startDate, endDate);
-	this.specificationToken = specToken;
-	this.siteToken = siteToken;
+	this.deviceTypeToken = deviceTypeToken;
 	this.excludeAssigned = excludeAssigned;
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.search.device.IDeviceSearchCriteria#
-     * getSpecificationToken()
+     * @see
+     * com.sitewhere.spi.search.device.IDeviceSearchCriteria#getDeviceTypeToken()
      */
-    public String getSpecificationToken() {
-	return specificationToken;
+    @Override
+    public String getDeviceTypeToken() {
+	return deviceTypeToken;
     }
 
-    public void setSpecificationToken(String specificationToken) {
-	this.specificationToken = specificationToken;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.search.device.IDeviceSearchCriteria#getSiteToken()
-     */
-    public String getSiteToken() {
-	return siteToken;
-    }
-
-    public void setSiteToken(String siteToken) {
-	this.siteToken = siteToken;
+    public void setDeviceTypeToken(String deviceTypeToken) {
+	this.deviceTypeToken = deviceTypeToken;
     }
 
     /*
@@ -76,6 +58,7 @@ public class DeviceSearchCriteria extends DateRangeSearchCriteria implements IDe
      * @see
      * com.sitewhere.spi.search.device.IDeviceSearchCriteria#isExcludeAssigned()
      */
+    @Override
     public boolean isExcludeAssigned() {
 	return excludeAssigned;
     }

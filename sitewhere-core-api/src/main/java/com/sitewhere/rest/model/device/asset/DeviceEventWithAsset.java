@@ -9,13 +9,13 @@ package com.sitewhere.rest.model.device.asset;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.sitewhere.rest.model.datatype.JsonDateSerializer;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.asset.IAsset;
-import com.sitewhere.spi.asset.IAssetModuleManager;
-import com.sitewhere.spi.device.DeviceAssignmentType;
+import com.sitewhere.spi.asset.IAssetManagement;
 import com.sitewhere.spi.device.asset.IDeviceEventWithAsset;
 import com.sitewhere.spi.device.event.DeviceEventType;
 import com.sitewhere.spi.device.event.IDeviceEvent;
@@ -40,10 +40,10 @@ public class DeviceEventWithAsset implements IDeviceEventWithAsset {
     /** Associated asset */
     protected IAsset asset;
 
-    public DeviceEventWithAsset(IDeviceEvent wrapped, IAssetModuleManager assets) throws SiteWhereException {
+    public DeviceEventWithAsset(IDeviceEvent wrapped, IAssetManagement assetManagement) throws SiteWhereException {
 	this.wrapped = wrapped;
-	if (wrapped.getAssignmentType() == DeviceAssignmentType.Associated) {
-	    this.asset = assets.getAssetById(wrapped.getAssetModuleId(), wrapped.getAssetId());
+	if (wrapped.getAssetId() != null) {
+	    this.asset = assetManagement.getAsset(wrapped.getAssetId());
 	}
     }
 
@@ -63,40 +63,6 @@ public class DeviceEventWithAsset implements IDeviceEventWithAsset {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.sitewhere.spi.common.IMetadataProvider#addOrReplaceMetadata(java.lang
-     * .String, java.lang.String)
-     */
-    @Override
-    public void addOrReplaceMetadata(String name, String value) throws SiteWhereException {
-	getWrapped().addOrReplaceMetadata(name, value);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.common.IMetadataProvider#removeMetadata(java.lang.
-     * String)
-     */
-    @Override
-    public String removeMetadata(String name) {
-	return getWrapped().removeMetadata(name);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.sitewhere.spi.common.IMetadataProvider#getMetadata(java.lang.String)
-     */
-    @Override
-    public String getMetadata(String name) {
-	return getWrapped().getMetadata(name);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.common.IMetadataProvider#getMetadata()
      */
     @Override
@@ -105,32 +71,10 @@ public class DeviceEventWithAsset implements IDeviceEventWithAsset {
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.common.IMetadataProvider#clearMetadata()
+     * @see com.sitewhere.spi.device.event.IDeviceEvent#getId()
      */
     @Override
-    public void clearMetadata() {
-	getWrapped().clearMetadata();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    @Override
-    public int compareTo(IDeviceEvent o) {
-	return getWrapped().compareTo(o);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.IDeviceEvent#getId()
-     */
-    @Override
-    public String getId() {
+    public UUID getId() {
 	return getWrapped().getId();
     }
 
@@ -155,53 +99,43 @@ public class DeviceEventWithAsset implements IDeviceEventWithAsset {
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.IDeviceEvent#getSiteToken()
+     * @see com.sitewhere.spi.device.event.IDeviceEvent#getDeviceId()
      */
     @Override
-    public String getSiteToken() {
-	return getWrapped().getSiteToken();
+    public UUID getDeviceId() {
+	return getWrapped().getDeviceId();
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.IDeviceEvent#getDeviceAssignmentToken()
+     * @see com.sitewhere.spi.device.event.IDeviceEvent#getDeviceAssignmentId()
      */
     @Override
-    public String getDeviceAssignmentToken() {
-	return getWrapped().getDeviceAssignmentToken();
+    public UUID getDeviceAssignmentId() {
+	return getWrapped().getDeviceAssignmentId();
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.IDeviceEvent#getAssignmentType()
+     * @see com.sitewhere.spi.device.event.IDeviceEvent#getCustomerId()
      */
     @Override
-    public DeviceAssignmentType getAssignmentType() {
-	return getWrapped().getAssignmentType();
+    public UUID getCustomerId() {
+	return getWrapped().getCustomerId();
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.event.IDeviceEvent#getAssetModuleId()
+     * @see com.sitewhere.spi.device.event.IDeviceEvent#getAreaId()
      */
     @Override
-    public String getAssetModuleId() {
-	return getWrapped().getAssetModuleId();
+    public UUID getAreaId() {
+	return getWrapped().getAreaId();
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.IDeviceEvent#getAssetId()
+     * @see com.sitewhere.spi.device.event.IDeviceEvent#getAssetId()
      */
     @Override
-    public String getAssetId() {
-	return getWrapped().getAssetId();
+    public UUID getAssetId() {
+	return getWrapped().getDeviceId();
     }
 
     /*

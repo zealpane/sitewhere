@@ -11,8 +11,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.sitewhere.rest.model.common.MetadataProviderEntity;
+import com.sitewhere.rest.model.common.PersistentEntity;
 import com.sitewhere.rest.model.datatype.JsonDateSerializer;
 import com.sitewhere.spi.scheduling.ISchedule;
 import com.sitewhere.spi.scheduling.TriggerType;
@@ -22,13 +24,11 @@ import com.sitewhere.spi.scheduling.TriggerType;
  * 
  * @author Derek
  */
-public class Schedule extends MetadataProviderEntity implements ISchedule {
+@JsonInclude(Include.NON_NULL)
+public class Schedule extends PersistentEntity implements ISchedule {
 
     /** Serial version UID */
     private static final long serialVersionUID = -1316208751255296000L;
-
-    /** Unique token */
-    private String token;
 
     /** Schedule name */
     private String name;
@@ -48,21 +48,9 @@ public class Schedule extends MetadataProviderEntity implements ISchedule {
     /*
      * (non-Javadoc)
      * 
-     * @see com.sitewhere.spi.scheduling.ISchedule#getToken()
-     */
-    public String getToken() {
-	return token;
-    }
-
-    public void setToken(String token) {
-	this.token = token;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see com.sitewhere.spi.scheduling.ISchedule#getName()
      */
+    @Override
     public String getName() {
 	return name;
     }
@@ -76,6 +64,7 @@ public class Schedule extends MetadataProviderEntity implements ISchedule {
      * 
      * @see com.sitewhere.spi.scheduling.ISchedule#getTriggerType()
      */
+    @Override
     public TriggerType getTriggerType() {
 	return triggerType;
     }
@@ -89,6 +78,7 @@ public class Schedule extends MetadataProviderEntity implements ISchedule {
      * 
      * @see com.sitewhere.spi.scheduling.ISchedule#getTriggerConfiguration()
      */
+    @Override
     public Map<String, String> getTriggerConfiguration() {
 	return triggerConfiguration;
     }
@@ -102,6 +92,7 @@ public class Schedule extends MetadataProviderEntity implements ISchedule {
      * 
      * @see com.sitewhere.spi.scheduling.ISchedule#getStartDate()
      */
+    @Override
     @JsonSerialize(using = JsonDateSerializer.class)
     public Date getStartDate() {
 	return startDate;
@@ -116,6 +107,7 @@ public class Schedule extends MetadataProviderEntity implements ISchedule {
      * 
      * @see com.sitewhere.spi.scheduling.ISchedule#getEndDate()
      */
+    @Override
     @JsonSerialize(using = JsonDateSerializer.class)
     public Date getEndDate() {
 	return endDate;

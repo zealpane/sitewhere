@@ -8,119 +8,129 @@
 package com.sitewhere.spi.device;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.sitewhere.spi.SiteWhereException;
-import com.sitewhere.spi.common.IMetadataProvider;
-import com.sitewhere.spi.device.batch.IBatchElement;
-import com.sitewhere.spi.device.batch.IBatchOperation;
+import com.sitewhere.spi.area.IArea;
+import com.sitewhere.spi.area.IAreaType;
+import com.sitewhere.spi.area.IZone;
+import com.sitewhere.spi.area.request.IAreaCreateRequest;
+import com.sitewhere.spi.area.request.IAreaTypeCreateRequest;
+import com.sitewhere.spi.area.request.IZoneCreateRequest;
+import com.sitewhere.spi.customer.ICustomer;
+import com.sitewhere.spi.customer.ICustomerType;
+import com.sitewhere.spi.customer.request.ICustomerCreateRequest;
+import com.sitewhere.spi.customer.request.ICustomerTypeCreateRequest;
 import com.sitewhere.spi.device.command.IDeviceCommand;
 import com.sitewhere.spi.device.event.request.IDeviceStreamCreateRequest;
 import com.sitewhere.spi.device.group.IDeviceGroup;
 import com.sitewhere.spi.device.group.IDeviceGroupElement;
-import com.sitewhere.spi.device.request.IBatchCommandInvocationRequest;
-import com.sitewhere.spi.device.request.IBatchElementUpdateRequest;
-import com.sitewhere.spi.device.request.IBatchOperationCreateRequest;
-import com.sitewhere.spi.device.request.IBatchOperationUpdateRequest;
+import com.sitewhere.spi.device.request.IDeviceAlarmCreateRequest;
 import com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest;
 import com.sitewhere.spi.device.request.IDeviceCommandCreateRequest;
 import com.sitewhere.spi.device.request.IDeviceCreateRequest;
 import com.sitewhere.spi.device.request.IDeviceGroupCreateRequest;
 import com.sitewhere.spi.device.request.IDeviceGroupElementCreateRequest;
-import com.sitewhere.spi.device.request.IDeviceSpecificationCreateRequest;
 import com.sitewhere.spi.device.request.IDeviceStatusCreateRequest;
-import com.sitewhere.spi.device.request.ISiteCreateRequest;
-import com.sitewhere.spi.device.request.IZoneCreateRequest;
+import com.sitewhere.spi.device.request.IDeviceTypeCreateRequest;
 import com.sitewhere.spi.device.streaming.IDeviceStream;
-import com.sitewhere.spi.search.IDateRangeSearchCriteria;
 import com.sitewhere.spi.search.ISearchCriteria;
 import com.sitewhere.spi.search.ISearchResults;
-import com.sitewhere.spi.search.device.IAssignmentSearchCriteria;
-import com.sitewhere.spi.search.device.IAssignmentsForAssetSearchCriteria;
-import com.sitewhere.spi.search.device.IBatchElementSearchCriteria;
+import com.sitewhere.spi.search.area.IAreaSearchCriteria;
+import com.sitewhere.spi.search.customer.ICustomerSearchCriteria;
+import com.sitewhere.spi.search.device.IDeviceAlarmSearchCriteria;
+import com.sitewhere.spi.search.device.IDeviceAssignmentSearchCriteria;
+import com.sitewhere.spi.search.device.IDeviceCommandSearchCriteria;
 import com.sitewhere.spi.search.device.IDeviceSearchCriteria;
-import com.sitewhere.spi.server.lifecycle.ITenantLifecycleComponent;
+import com.sitewhere.spi.search.device.IDeviceStatusSearchCriteria;
+import com.sitewhere.spi.search.device.IZoneSearchCriteria;
+import com.sitewhere.spi.server.lifecycle.ITenantEngineLifecycleComponent;
 
 /**
  * Interface for device management operations.
  * 
  * @author Derek
  */
-public interface IDeviceManagement extends ITenantLifecycleComponent {
+public interface IDeviceManagement extends ITenantEngineLifecycleComponent {
 
     /**
-     * Create a new device specification.
+     * Create a new device type.
      * 
      * @param request
-     *            information about new specification
-     * @return device specification that was created
+     *            information about new type
+     * @return device type that was created
      * @throws SiteWhereException
      */
-    public IDeviceSpecification createDeviceSpecification(IDeviceSpecificationCreateRequest request)
-	    throws SiteWhereException;
+    public IDeviceType createDeviceType(IDeviceTypeCreateRequest request) throws SiteWhereException;
 
     /**
-     * Get a device specification by unique token.
+     * Get device type by unique id.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public IDeviceType getDeviceType(UUID id) throws SiteWhereException;
+
+    /**
+     * Get a device type by unique token.
      * 
      * @param token
-     *            unique device specification token
-     * @return corresponding specification or null if not found
+     *            unique device type token
+     * @return corresponding device type or null if not found
      * @throws SiteWhereException
      *             if implementation encountered an error
      */
-    public IDeviceSpecification getDeviceSpecificationByToken(String token) throws SiteWhereException;
+    public IDeviceType getDeviceTypeByToken(String token) throws SiteWhereException;
 
     /**
-     * Update an existing device specification.
+     * Update an existing device type.
      * 
      * @param token
-     *            unique specification token
+     *            unique device type id
      * @param request
      *            updated information
-     * @return updated device specification
+     * @return updated device type
      * @throws SiteWhereException
      *             if implementation encountered an error
      */
-    public IDeviceSpecification updateDeviceSpecification(String token, IDeviceSpecificationCreateRequest request)
-	    throws SiteWhereException;
+    public IDeviceType updateDeviceType(UUID id, IDeviceTypeCreateRequest request) throws SiteWhereException;
 
     /**
-     * List device specifications that match the search criteria.
+     * List device types that match the search criteria.
      * 
-     * @param includeDeleted
-     *            include specifications marked as deleted
      * @param criteria
-     *            search criteria
-     * @return results corresponding to search criteria
+     * @return
      * @throws SiteWhereException
-     *             if implementation encountered an error
      */
-    public ISearchResults<IDeviceSpecification> listDeviceSpecifications(boolean includeDeleted,
-	    ISearchCriteria criteria) throws SiteWhereException;
+    public ISearchResults<IDeviceType> listDeviceTypes(ISearchCriteria criteria) throws SiteWhereException;
 
     /**
-     * Delete an existing device specification.
+     * Delete an existing device type.
      * 
-     * @param token
-     *            unique specification token
-     * @param force
-     *            if true, deletes specification. if false, marks as deleted.
-     * @return the deleted specification
+     * @param id
+     * @return
      * @throws SiteWhereException
-     *             if implementation encountered an error
      */
-    public IDeviceSpecification deleteDeviceSpecification(String token, boolean force) throws SiteWhereException;
+    public IDeviceType deleteDeviceType(UUID id) throws SiteWhereException;
 
     /**
-     * Creates a device command associated with an existing device
-     * specification.
+     * Create a device command.
      * 
-     * @param spec
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceCommand createDeviceCommand(IDeviceSpecification spec, IDeviceCommandCreateRequest request)
-	    throws SiteWhereException;
+    public IDeviceCommand createDeviceCommand(IDeviceCommandCreateRequest request) throws SiteWhereException;
+
+    /**
+     * Get device command by unique id.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public IDeviceCommand getDeviceCommand(UUID id) throws SiteWhereException;
 
     /**
      * Get a device command by unique token.
@@ -134,83 +144,87 @@ public interface IDeviceManagement extends ITenantLifecycleComponent {
     /**
      * Update an existing device command.
      * 
-     * @param token
+     * @param id
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceCommand updateDeviceCommand(String token, IDeviceCommandCreateRequest request)
-	    throws SiteWhereException;
+    public IDeviceCommand updateDeviceCommand(UUID id, IDeviceCommandCreateRequest request) throws SiteWhereException;
 
     /**
-     * List device command objects associated with a device specification.
+     * List device commands that match the given criteria.
      * 
-     * @param specToken
-     * @param includeDeleted
+     * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public List<IDeviceCommand> listDeviceCommands(String specToken, boolean includeDeleted) throws SiteWhereException;
+    public ISearchResults<IDeviceCommand> listDeviceCommands(IDeviceCommandSearchCriteria criteria)
+	    throws SiteWhereException;
 
     /**
      * Delete an existing device command.
      * 
-     * @param token
-     * @param force
+     * @param id
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceCommand deleteDeviceCommand(String token, boolean force) throws SiteWhereException;
+    public IDeviceCommand deleteDeviceCommand(UUID id) throws SiteWhereException;
 
     /**
-     * Creates a device status associated with an existing device specification.
+     * Create a device status.
      * 
-     * @param specToken
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceStatus createDeviceStatus(String specToken, IDeviceStatusCreateRequest request)
-	    throws SiteWhereException;
+    public IDeviceStatus createDeviceStatus(IDeviceStatusCreateRequest request) throws SiteWhereException;
 
     /**
-     * Get a device status by unique code.
+     * Get device status by unique id.
      * 
-     * @param code
+     * @param id
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceStatus getDeviceStatusByCode(String specToken, String code) throws SiteWhereException;
+    public IDeviceStatus getDeviceStatus(UUID id) throws SiteWhereException;
+
+    /**
+     * Get a device status by unique token.
+     * 
+     * @param token
+     * @return
+     * @throws SiteWhereException
+     */
+    public IDeviceStatus getDeviceStatusByToken(String token) throws SiteWhereException;
 
     /**
      * Update an existing device status.
      * 
-     * @param code
+     * @param id
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceStatus updateDeviceStatus(String specToken, String code, IDeviceStatusCreateRequest request)
-	    throws SiteWhereException;
+    public IDeviceStatus updateDeviceStatus(UUID id, IDeviceStatusCreateRequest request) throws SiteWhereException;
 
     /**
-     * List device statuses associated with a device specification.
+     * List device statuses that match criteria.
      * 
-     * @param specToken
+     * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public List<IDeviceStatus> listDeviceStatuses(String specToken) throws SiteWhereException;
+    public ISearchResults<IDeviceStatus> listDeviceStatuses(IDeviceStatusSearchCriteria criteria)
+	    throws SiteWhereException;
 
     /**
      * Delete an existing device status.
      * 
-     * @param specToken
-     * @param code
+     * @param id
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceStatus deleteDeviceStatus(String specToken, String code) throws SiteWhereException;
+    public IDeviceStatus deleteDeviceStatus(UUID id) throws SiteWhereException;
 
     /**
      * Create a new device.
@@ -222,74 +236,70 @@ public interface IDeviceManagement extends ITenantLifecycleComponent {
     public IDevice createDevice(IDeviceCreateRequest device) throws SiteWhereException;
 
     /**
-     * Gets a device by unique hardware id.
+     * Get device by unique id.
      * 
-     * @param hardwareId
+     * @param deviceId
      * @return
      * @throws SiteWhereException
      */
-    public IDevice getDeviceByHardwareId(String hardwareId) throws SiteWhereException;
+    public IDevice getDevice(UUID deviceId) throws SiteWhereException;
+
+    /**
+     * Gets a device by reference token.
+     * 
+     * @param token
+     * @return
+     * @throws SiteWhereException
+     */
+    public IDevice getDeviceByToken(String token) throws SiteWhereException;
 
     /**
      * Update device information.
      * 
-     * @param hardwareId
+     * @param deviceId
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDevice updateDevice(String hardwareId, IDeviceCreateRequest request) throws SiteWhereException;
-
-    /**
-     * Gets the current assignment for a device. Null if none.
-     * 
-     * @param device
-     * @return
-     * @throws SiteWhereException
-     */
-    public IDeviceAssignment getCurrentDeviceAssignment(IDevice device) throws SiteWhereException;
+    public IDevice updateDevice(UUID deviceId, IDeviceCreateRequest request) throws SiteWhereException;
 
     /**
      * List devices that meet the given criteria.
      * 
-     * @param includeDeleted
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDevice> listDevices(boolean includeDeleted, IDeviceSearchCriteria criteria)
-	    throws SiteWhereException;
+    public ISearchResults<IDevice> listDevices(IDeviceSearchCriteria criteria) throws SiteWhereException;
 
     /**
      * Create an {@link IDeviceElementMapping} for a nested device.
      * 
-     * @param hardwareId
+     * @param deviceId
      * @param mapping
      * @return
      * @throws SiteWhereException
      */
-    public IDevice createDeviceElementMapping(String hardwareId, IDeviceElementMapping mapping)
-	    throws SiteWhereException;
+    public IDevice createDeviceElementMapping(UUID deviceId, IDeviceElementMapping mapping) throws SiteWhereException;
 
     /**
      * Delete an exising {@link IDeviceElementMapping} from a device.
      * 
-     * @param hardwareId
+     * @param deviceId
      * @param path
      * @return
      * @throws SiteWhereException
      */
-    public IDevice deleteDeviceElementMapping(String hardwareId, String path) throws SiteWhereException;
+    public IDevice deleteDeviceElementMapping(UUID deviceId, String path) throws SiteWhereException;
 
     /**
      * Delete an existing device.
      * 
-     * @param hardwareId
-     * @param force
+     * @param deviceId
      * @return
      * @throws SiteWhereException
      */
-    public IDevice deleteDevice(String hardwareId, boolean force) throws SiteWhereException;
+    public IDevice deleteDevice(UUID deviceId) throws SiteWhereException;
 
     /**
      * Create a new device assignment.
@@ -301,6 +311,15 @@ public interface IDeviceManagement extends ITenantLifecycleComponent {
     public IDeviceAssignment createDeviceAssignment(IDeviceAssignmentCreateRequest request) throws SiteWhereException;
 
     /**
+     * Get device assignment by unique id.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public IDeviceAssignment getDeviceAssignment(UUID id) throws SiteWhereException;
+
+    /**
      * Get a device assignment by unique token.
      * 
      * @param token
@@ -310,237 +329,388 @@ public interface IDeviceManagement extends ITenantLifecycleComponent {
     public IDeviceAssignment getDeviceAssignmentByToken(String token) throws SiteWhereException;
 
     /**
-     * Delete a device assignment. Depending on 'force' flag the assignment will
-     * be marked for delete or actually be deleted.
+     * Gets the current assignment for a device. Null if none.
      * 
-     * @param token
-     * @param force
+     * @param deviceId
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceAssignment deleteDeviceAssignment(String token, boolean force) throws SiteWhereException;
+    public IDeviceAssignment getCurrentDeviceAssignment(UUID deviceId) throws SiteWhereException;
 
     /**
-     * Get the device associated with an assignment.
+     * Update an existing device assignment.
      * 
-     * @param assignment
+     * @param id
+     * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDevice getDeviceForAssignment(IDeviceAssignment assignment) throws SiteWhereException;
-
-    /**
-     * Get the site associated with an assignment.
-     * 
-     * @param assignment
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISite getSiteForAssignment(IDeviceAssignment assignment) throws SiteWhereException;
-
-    /**
-     * Update metadata associated with a device assignment.
-     * 
-     * @param token
-     * @param metadata
-     * @return
-     * @throws SiteWhereException
-     */
-    public IDeviceAssignment updateDeviceAssignmentMetadata(String token, IMetadataProvider metadata)
+    public IDeviceAssignment updateDeviceAssignment(UUID id, IDeviceAssignmentCreateRequest request)
 	    throws SiteWhereException;
 
     /**
-     * Update the status of an existing device assignment.
+     * List device assignments that match the given criteria.
      * 
-     * @param token
-     * @param status
+     * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceAssignment updateDeviceAssignmentStatus(String token, DeviceAssignmentStatus status)
-	    throws SiteWhereException;
-
-    /**
-     * Updates the current state of a device assignment.
-     * 
-     * @param token
-     * @param state
-     * @return
-     * @throws SiteWhereException
-     */
-    public IDeviceAssignment updateDeviceAssignmentState(String token, IDeviceAssignmentState state)
+    public ISearchResults<IDeviceAssignment> listDeviceAssignments(IDeviceAssignmentSearchCriteria criteria)
 	    throws SiteWhereException;
 
     /**
      * Ends a device assignment.
      * 
-     * @param token
+     * @param id
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceAssignment endDeviceAssignment(String token) throws SiteWhereException;
+    public IDeviceAssignment endDeviceAssignment(UUID id) throws SiteWhereException;
 
     /**
-     * Get the device assignment history for a given device.
+     * Delete a device assignment.
      * 
-     * @param hardwareId
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public IDeviceAssignment deleteDeviceAssignment(UUID id) throws SiteWhereException;
+
+    /**
+     * Create a device alarm.
+     * 
+     * @param request
+     * @return
+     * @throws SiteWhereException
+     */
+    public IDeviceAlarm createDeviceAlarm(IDeviceAlarmCreateRequest request) throws SiteWhereException;
+
+    /**
+     * Update an existing device alarm.
+     * 
+     * @param id
+     * @param request
+     * @return
+     * @throws SiteWhereException
+     */
+    public IDeviceAlarm updateDeviceAlarm(UUID id, IDeviceAlarmCreateRequest request) throws SiteWhereException;
+
+    /**
+     * Get device alarm by unique id.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public IDeviceAlarm getDeviceAlarm(UUID id) throws SiteWhereException;
+
+    /**
+     * Search for device alarms that match criteria.
+     * 
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceAssignment> getDeviceAssignmentHistory(String hardwareId, ISearchCriteria criteria)
+    public ISearchResults<IDeviceAlarm> searchDeviceAlarms(IDeviceAlarmSearchCriteria criteria)
 	    throws SiteWhereException;
 
     /**
-     * Get a list of device assignments for a site.
+     * Delete a device alarm.
      * 
-     * @param siteToken
-     * @param criteria
+     * @param id
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceAssignment> getDeviceAssignmentsForSite(String siteToken,
-	    IAssignmentSearchCriteria criteria) throws SiteWhereException;
-
-    /**
-     * Finds all device assignments for a site with a last interaction date in
-     * the given date range. Note that events must be posted with the
-     * 'updateState' option in order for the last interaction date to be
-     * updated.
-     * 
-     * @param siteToken
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceAssignment> getDeviceAssignmentsWithLastInteraction(String siteToken,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
-
-    /**
-     * Find all device assignments that have been marked missing by the presence
-     * manager.
-     * 
-     * @param siteToken
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceAssignment> getMissingDeviceAssignments(String siteToken, ISearchCriteria criteria)
-	    throws SiteWhereException;
-
-    /**
-     * Get a list of device assignments associated with a given asset.
-     * 
-     * @param assetModuleId
-     * @param assetId
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceAssignment> getDeviceAssignmentsForAsset(String assetModuleId, String assetId,
-	    IAssignmentsForAssetSearchCriteria criteria) throws SiteWhereException;
+    public IDeviceAlarm deleteDeviceAlarm(UUID id) throws SiteWhereException;
 
     /**
      * Create a new {@link IDeviceStream} associated with an assignment.
      * 
-     * @param assignmentToken
+     * @param assignmentId
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceStream createDeviceStream(String assignmentToken, IDeviceStreamCreateRequest request)
+    public IDeviceStream createDeviceStream(UUID assignmentId, IDeviceStreamCreateRequest request)
 	    throws SiteWhereException;
 
     /**
-     * Get an exsiting {@link IDeviceStream} for an assignment based on unique
+     * Get an exisiting {@link IDeviceStream} for an assignment based on unique
      * stream id. Returns null if not found.
      * 
-     * @param assignmentToken
+     * @param assignmentId
      * @param streamId
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceStream getDeviceStream(String assignmentToken, String streamId) throws SiteWhereException;
+    public IDeviceStream getDeviceStream(UUID assignmentId, String streamId) throws SiteWhereException;
 
     /**
      * List device streams for the assignment that meet the given criteria.
      * 
-     * @param assignmentToken
+     * @param assignmentId
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceStream> listDeviceStreams(String assignmentToken, ISearchCriteria criteria)
+    public ISearchResults<IDeviceStream> listDeviceStreams(UUID assignmentId, ISearchCriteria criteria)
 	    throws SiteWhereException;
 
     /**
-     * Create a site based on the given input.
+     * Create a customer type based on the given input.
      * 
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public ISite createSite(ISiteCreateRequest request) throws SiteWhereException;
+    public ICustomerType createCustomerType(ICustomerTypeCreateRequest request) throws SiteWhereException;
 
     /**
-     * Delete a site based on unique site token. If 'force' is specified, the
-     * database object will be deleted, otherwise the deleted flag will be set
-     * to true.
+     * Get customer type by unique id.
      * 
-     * @param siteToken
-     * @param force
+     * @param id
      * @return
      * @throws SiteWhereException
      */
-    public ISite deleteSite(String siteToken, boolean force) throws SiteWhereException;
+    public ICustomerType getCustomerType(UUID id) throws SiteWhereException;
 
     /**
-     * Update information for a site.
-     * 
-     * @param siteToken
-     * @param request
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISite updateSite(String siteToken, ISiteCreateRequest request) throws SiteWhereException;
-
-    /**
-     * Get a site by unique token.
+     * Get a customer type by alias token.
      * 
      * @param token
      * @return
      * @throws SiteWhereException
      */
-    public ISite getSiteByToken(String token) throws SiteWhereException;
+    public ICustomerType getCustomerTypeByToken(String token) throws SiteWhereException;
 
     /**
-     * Get a list of all sites.
+     * Update information for a customer type.
+     * 
+     * @param id
+     * @param request
+     * @return
+     * @throws SiteWhereException
+     */
+    public ICustomerType updateCustomerType(UUID id, ICustomerTypeCreateRequest request) throws SiteWhereException;
+
+    /**
+     * Get a list of customer types matching search criteria.
      * 
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<ISite> listSites(ISearchCriteria criteria) throws SiteWhereException;
+    public ISearchResults<ICustomerType> listCustomerTypes(ISearchCriteria criteria) throws SiteWhereException;
+
+    /**
+     * Delete a customer type.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public ICustomerType deleteCustomerType(UUID id) throws SiteWhereException;
+
+    /**
+     * Create a customer based on the given input.
+     * 
+     * @param request
+     * @return
+     * @throws SiteWhereException
+     */
+    public ICustomer createCustomer(ICustomerCreateRequest request) throws SiteWhereException;
+
+    /**
+     * Get customer by unique id.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public ICustomer getCustomer(UUID id) throws SiteWhereException;
+
+    /**
+     * Get a customer by alias token.
+     * 
+     * @param token
+     * @return
+     * @throws SiteWhereException
+     */
+    public ICustomer getCustomerByToken(String token) throws SiteWhereException;
+
+    /**
+     * Get list of customers that are children of the given area.
+     * 
+     * @param token
+     * @return
+     * @throws SiteWhereException
+     */
+    public List<ICustomer> getCustomerChildren(String token) throws SiteWhereException;
+
+    /**
+     * Update information for a customer.
+     * 
+     * @param id
+     * @param request
+     * @return
+     * @throws SiteWhereException
+     */
+    public ICustomer updateCustomer(UUID id, ICustomerCreateRequest request) throws SiteWhereException;
+
+    /**
+     * Get a list of customers matching search criteria.
+     * 
+     * @param criteria
+     * @return
+     * @throws SiteWhereException
+     */
+    public ISearchResults<ICustomer> listCustomers(ICustomerSearchCriteria criteria) throws SiteWhereException;
+
+    /**
+     * Delete a customer.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public ICustomer deleteCustomer(UUID id) throws SiteWhereException;
+
+    /**
+     * Create an area type based on the given input.
+     * 
+     * @param request
+     * @return
+     * @throws SiteWhereException
+     */
+    public IAreaType createAreaType(IAreaTypeCreateRequest request) throws SiteWhereException;
+
+    /**
+     * Get area type by unique id.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public IAreaType getAreaType(UUID id) throws SiteWhereException;
+
+    /**
+     * Get a area type by alias token.
+     * 
+     * @param token
+     * @return
+     * @throws SiteWhereException
+     */
+    public IAreaType getAreaTypeByToken(String token) throws SiteWhereException;
+
+    /**
+     * Update information for an area type.
+     * 
+     * @param id
+     * @param request
+     * @return
+     * @throws SiteWhereException
+     */
+    public IAreaType updateAreaType(UUID id, IAreaTypeCreateRequest request) throws SiteWhereException;
+
+    /**
+     * Get a list of area types matching search criteria.
+     * 
+     * @param criteria
+     * @return
+     * @throws SiteWhereException
+     */
+    public ISearchResults<IAreaType> listAreaTypes(ISearchCriteria criteria) throws SiteWhereException;
+
+    /**
+     * Delete an area type.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public IAreaType deleteAreaType(UUID id) throws SiteWhereException;
+
+    /**
+     * Create an area based on the given input.
+     * 
+     * @param request
+     * @return
+     * @throws SiteWhereException
+     */
+    public IArea createArea(IAreaCreateRequest request) throws SiteWhereException;
+
+    /**
+     * Get area by unique id.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public IArea getArea(UUID id) throws SiteWhereException;
+
+    /**
+     * Get a area by alias token.
+     * 
+     * @param token
+     * @return
+     * @throws SiteWhereException
+     */
+    public IArea getAreaByToken(String token) throws SiteWhereException;
+
+    /**
+     * Get list of areas that are children of the given area.
+     * 
+     * @param token
+     * @return
+     * @throws SiteWhereException
+     */
+    public List<IArea> getAreaChildren(String token) throws SiteWhereException;
+
+    /**
+     * Update information for an area.
+     * 
+     * @param id
+     * @param request
+     * @return
+     * @throws SiteWhereException
+     */
+    public IArea updateArea(UUID id, IAreaCreateRequest request) throws SiteWhereException;
+
+    /**
+     * Get a list of areas matching search criteria.
+     * 
+     * @param criteria
+     * @return
+     * @throws SiteWhereException
+     */
+    public ISearchResults<IArea> listAreas(IAreaSearchCriteria criteria) throws SiteWhereException;
+
+    /**
+     * Delete an area.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public IArea deleteArea(UUID id) throws SiteWhereException;
 
     /**
      * Create a new zone.
      * 
-     * @param site
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IZone createZone(ISite site, IZoneCreateRequest request) throws SiteWhereException;
+    public IZone createZone(IZoneCreateRequest request) throws SiteWhereException;
 
     /**
-     * Update an existing zone.
+     * Get zone by unique id.
      * 
-     * @param token
-     * @param request
+     * @param id
      * @return
      * @throws SiteWhereException
      */
-    public IZone updateZone(String token, IZoneCreateRequest request) throws SiteWhereException;
+    public IZone getZone(UUID id) throws SiteWhereException;
 
     /**
      * Get a zone by its unique token.
@@ -549,27 +719,35 @@ public interface IDeviceManagement extends ITenantLifecycleComponent {
      * @return
      * @throws SiteWhereException
      */
-    public IZone getZone(String zoneToken) throws SiteWhereException;
+    public IZone getZoneByToken(String zoneToken) throws SiteWhereException;
 
     /**
-     * Get a list of all zones associated with a Site.
+     * Update an existing zone.
      * 
-     * @param siteToken
+     * @param id
+     * @param request
+     * @return
+     * @throws SiteWhereException
+     */
+    public IZone updateZone(UUID id, IZoneCreateRequest request) throws SiteWhereException;
+
+    /**
+     * Get list of all zones that match the given criteria.
+     * 
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IZone> listZones(String siteToken, ISearchCriteria criteria) throws SiteWhereException;
+    public ISearchResults<IZone> listZones(IZoneSearchCriteria criteria) throws SiteWhereException;
 
     /**
-     * Delete a zone given its unique token.
+     * Delete a zone.
      * 
-     * @param zoneToken
-     * @param force
+     * @param id
      * @return
      * @throws SiteWhereException
      */
-    public IZone deleteZone(String zoneToken, boolean force) throws SiteWhereException;
+    public IZone deleteZone(UUID id) throws SiteWhereException;
 
     /**
      * Create a new device group.
@@ -581,174 +759,91 @@ public interface IDeviceManagement extends ITenantLifecycleComponent {
     public IDeviceGroup createDeviceGroup(IDeviceGroupCreateRequest request) throws SiteWhereException;
 
     /**
-     * Update an existing device group.
+     * Get device group by unique id.
+     * 
+     * @param id
+     * @return
+     * @throws SiteWhereException
+     */
+    public IDeviceGroup getDeviceGroup(UUID id) throws SiteWhereException;
+
+    /**
+     * Get a device group by unique token.
      * 
      * @param token
+     * @return
+     * @throws SiteWhereException
+     */
+    public IDeviceGroup getDeviceGroupByToken(String token) throws SiteWhereException;
+
+    /**
+     * Update an existing device group.
+     * 
+     * @param id
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceGroup updateDeviceGroup(String token, IDeviceGroupCreateRequest request) throws SiteWhereException;
-
-    /**
-     * Get a device network by unique token.
-     * 
-     * @param token
-     * @return
-     * @throws SiteWhereException
-     */
-    public IDeviceGroup getDeviceGroup(String token) throws SiteWhereException;
+    public IDeviceGroup updateDeviceGroup(UUID id, IDeviceGroupCreateRequest request) throws SiteWhereException;
 
     /**
      * List device groups.
      * 
-     * @param includeDeleted
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceGroup> listDeviceGroups(boolean includeDeleted, ISearchCriteria criteria)
-	    throws SiteWhereException;
+    public ISearchResults<IDeviceGroup> listDeviceGroups(ISearchCriteria criteria) throws SiteWhereException;
 
     /**
      * Lists all device groups that have the given role.
      * 
      * @param role
-     * @param includeDeleted
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceGroup> listDeviceGroupsWithRole(String role, boolean includeDeleted,
-	    ISearchCriteria criteria) throws SiteWhereException;
+    public ISearchResults<IDeviceGroup> listDeviceGroupsWithRole(String role, ISearchCriteria criteria)
+	    throws SiteWhereException;
 
     /**
      * Delete a device group.
      * 
-     * @param token
-     * @param force
+     * @param id
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceGroup deleteDeviceGroup(String token, boolean force) throws SiteWhereException;
+    public IDeviceGroup deleteDeviceGroup(UUID id) throws SiteWhereException;
 
     /**
      * Add elements to a device group.
      * 
-     * @param groupToken
+     * @param groupId
      * @param elements
      * @param ignoreDuplicates
      * @return
      * @throws SiteWhereException
      */
-    public List<IDeviceGroupElement> addDeviceGroupElements(String groupToken,
+    public List<IDeviceGroupElement> addDeviceGroupElements(UUID groupId,
 	    List<IDeviceGroupElementCreateRequest> elements, boolean ignoreDuplicates) throws SiteWhereException;
 
     /**
      * Remove selected elements from a device group.
      * 
-     * @param groupToken
      * @param elements
      * @return
      * @throws SiteWhereException
      */
-    public List<IDeviceGroupElement> removeDeviceGroupElements(String groupToken,
-	    List<IDeviceGroupElementCreateRequest> elements) throws SiteWhereException;
+    public List<IDeviceGroupElement> removeDeviceGroupElements(List<UUID> elements) throws SiteWhereException;
 
     /**
      * List device group elements that meet the given criteria.
      * 
-     * @param groupToken
+     * @param groupId
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceGroupElement> listDeviceGroupElements(String groupToken, ISearchCriteria criteria)
-	    throws SiteWhereException;
-
-    /**
-     * Creates an {@link IBatchOperation} to perform an operation on multiple
-     * devices.
-     * 
-     * @param request
-     * @return
-     * @throws SiteWhereException
-     */
-    public IBatchOperation createBatchOperation(IBatchOperationCreateRequest request) throws SiteWhereException;
-
-    /**
-     * Update an existing {@link IBatchOperation}.
-     * 
-     * @param token
-     * @param request
-     * @return
-     * @throws SiteWhereException
-     */
-    public IBatchOperation updateBatchOperation(String token, IBatchOperationUpdateRequest request)
-	    throws SiteWhereException;
-
-    /**
-     * Get an {@link IBatchOperation} by unique token.
-     * 
-     * @param token
-     * @return
-     * @throws SiteWhereException
-     */
-    public IBatchOperation getBatchOperation(String token) throws SiteWhereException;
-
-    /**
-     * List batch operations based on the given criteria.
-     * 
-     * @param includeDeleted
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IBatchOperation> listBatchOperations(boolean includeDeleted, ISearchCriteria criteria)
-	    throws SiteWhereException;
-
-    /**
-     * Deletes a batch operation and its elements.
-     * 
-     * @param token
-     * @param force
-     * @return
-     * @throws SiteWhereException
-     */
-    public IBatchOperation deleteBatchOperation(String token, boolean force) throws SiteWhereException;
-
-    /**
-     * Lists elements for an {@link IBatchOperation} that meet the given
-     * criteria.
-     * 
-     * @param batchToken
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IBatchElement> listBatchElements(String batchToken, IBatchElementSearchCriteria criteria)
-	    throws SiteWhereException;
-
-    /**
-     * Updates an existing batch operation element.
-     * 
-     * @param operationToken
-     * @param index
-     * @param request
-     * @return
-     * @throws SiteWhereException
-     */
-    public IBatchElement updateBatchElement(String operationToken, long index, IBatchElementUpdateRequest request)
-	    throws SiteWhereException;
-
-    /**
-     * Creates an {@link ISearchResults} that will invoke a command on multiple
-     * devices.
-     * 
-     * @param request
-     * @return
-     * @throws SiteWhereException
-     */
-    public IBatchOperation createBatchCommandInvocation(IBatchCommandInvocationRequest request)
+    public ISearchResults<IDeviceGroupElement> listDeviceGroupElements(UUID groupId, ISearchCriteria criteria)
 	    throws SiteWhereException;
 }

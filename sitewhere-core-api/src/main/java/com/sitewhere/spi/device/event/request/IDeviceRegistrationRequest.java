@@ -7,31 +7,26 @@
  */
 package com.sitewhere.spi.device.event.request;
 
+import com.sitewhere.spi.device.request.IDeviceCreateRequest;
+
 /**
  * Interface for arguments needed to register a device.
  * 
  * @author Derek
  */
-public interface IDeviceRegistrationRequest extends IDeviceStateChangeCreateRequest {
+public interface IDeviceRegistrationRequest extends IDeviceCreateRequest {
 
     /**
-     * Get hardware id to be registered.
+     * Get token for customer to which device should be assigned.
      * 
      * @return
      */
-    public String getHardwareId();
+    public String getCustomerToken();
 
     /**
-     * Get token for device hardware specification.
+     * Get token for area to which device should be assigned.
      * 
      * @return
      */
-    public String getSpecificationToken();
-
-    /**
-     * Get token for site to which device should be assigned.
-     * 
-     * @return
-     */
-    public String getSiteToken();
+    public String getAreaToken();
 }

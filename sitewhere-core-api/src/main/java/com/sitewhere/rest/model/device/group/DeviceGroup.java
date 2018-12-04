@@ -7,12 +7,12 @@
  */
 package com.sitewhere.rest.model.device.group;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sitewhere.rest.model.common.MetadataProviderEntity;
-import com.sitewhere.spi.SiteWhereException;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.sitewhere.rest.model.common.BrandedEntity;
 import com.sitewhere.spi.device.group.IDeviceGroup;
 
 /**
@@ -20,13 +20,11 @@ import com.sitewhere.spi.device.group.IDeviceGroup;
  * 
  * @author Derek
  */
-public class DeviceGroup extends MetadataProviderEntity implements IDeviceGroup, Serializable {
+@JsonInclude(Include.NON_NULL)
+public class DeviceGroup extends BrandedEntity implements IDeviceGroup {
 
     /** Serialization version identifier */
     private static final long serialVersionUID = -4993194128786517276L;
-
-    /** Unique token */
-    private String token;
 
     /** Group name */
     private String name;
@@ -36,20 +34,6 @@ public class DeviceGroup extends MetadataProviderEntity implements IDeviceGroup,
 
     /** List of roles */
     private List<String> roles = new ArrayList<String>();
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.group.IDeviceGroup#getToken()
-     */
-    @Override
-    public String getToken() {
-	return token;
-    }
-
-    public void setToken(String token) {
-	this.token = token;
-    }
 
     /*
      * (non-Javadoc)
@@ -90,15 +74,5 @@ public class DeviceGroup extends MetadataProviderEntity implements IDeviceGroup,
 
     public void setRoles(List<String> roles) {
 	this.roles = roles;
-    }
-
-    public static DeviceGroup copy(IDeviceGroup input) throws SiteWhereException {
-	DeviceGroup result = new DeviceGroup();
-	result.setToken(input.getToken());
-	result.setName(input.getName());
-	result.setDescription(input.getDescription());
-	result.getRoles().addAll(input.getRoles());
-	MetadataProviderEntity.copy(input, result);
-	return result;
     }
 }

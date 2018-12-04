@@ -8,61 +8,55 @@
 package com.sitewhere.spi.device;
 
 import java.util.Date;
+import java.util.UUID;
 
-import com.sitewhere.spi.common.IMetadataProviderEntity;
+import com.sitewhere.spi.common.IPersistentEntity;
 
 /**
- * Assigns a device to a physical entity being monitored. A device may be used
- * for multiple assets over a period of time.
+ * Assigns a device to a customer, area, and/or asset so that events may be
+ * associated with those entities.
  * 
  * @author Derek
  */
-public interface IDeviceAssignment extends IMetadataProviderEntity {
+public interface IDeviceAssignment extends IPersistentEntity {
 
     /**
-     * Get token that uniquely identifies the assignment.
+     * Get unique id for assigned device.
      * 
      * @return
      */
-    public String getToken();
+    public UUID getDeviceId();
 
     /**
-     * Get hardware id for assigned device.
+     * Get unique id for assigned device type at time of assignment.
      * 
      * @return
      */
-    public String getDeviceHardwareId();
+    public UUID getDeviceTypeId();
 
     /**
-     * Get token for assigned site.
+     * Get unqiue id for customer assigned to device.
      * 
      * @return
      */
-    public String getSiteToken();
+    public UUID getCustomerId();
 
     /**
-     * Get the referenced asset type.
+     * Get unique id for area assigned to device.
      * 
      * @return
      */
-    public DeviceAssignmentType getAssignmentType();
+    public UUID getAreaId();
 
     /**
-     * Get id of referenced asset module.
+     * Get asset id.
      * 
      * @return
      */
-    public String getAssetModuleId();
+    public UUID getAssetId();
 
     /**
-     * Get the asset identifier.
-     * 
-     * @return
-     */
-    public String getAssetId();
-
-    /**
-     * Get the device assignement status.
+     * Get the device assignment status.
      * 
      * @return
      */
@@ -81,11 +75,4 @@ public interface IDeviceAssignment extends IMetadataProviderEntity {
      * @return
      */
     public Date getReleasedDate();
-
-    /**
-     * Get latest state information for the assignment.
-     * 
-     * @return
-     */
-    public IDeviceAssignmentState getState();
 }

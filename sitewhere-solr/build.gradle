@@ -1,11 +1,18 @@
-apply plugin: 'nebula.provided-base'
+description = 'SiteWhere Solr Implementation'
 
-description = 'SiteWhere Solr Integration'
 dependencies {
-    compile project(':sitewhere-client')
-    compile project(':sitewhere-core')
-    compile group: 'org.apache.solr', name: 'solr-solrj', version:'6.4.0'
-	compile group: 'org.springframework', name: 'spring-beans'
-    
-	provided group: 'org.apache.solr', name: 'solr-core', version:'6.4.0'
+    compile project(':sitewhere-configuration')
+
+    // Apache Solr
+    compile group: 'org.apache.solr', name: 'solr-solrj', version: "${rootProject.ext['solr.version']}"
+}
+
+// Publish jar.
+apply plugin: 'maven-publish'
+publishing {
+	publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+	}
 }

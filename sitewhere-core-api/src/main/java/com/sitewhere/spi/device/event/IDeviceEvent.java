@@ -9,23 +9,23 @@ package com.sitewhere.spi.device.event;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 import com.sitewhere.spi.common.IMetadataProvider;
-import com.sitewhere.spi.device.DeviceAssignmentType;
 
 /**
  * Event that originates from a device.
  * 
  * @author Derek
  */
-public interface IDeviceEvent extends IMetadataProvider, Comparable<IDeviceEvent>, Serializable {
+public interface IDeviceEvent extends IMetadataProvider, Serializable {
 
     /**
-     * Get a string that uniquely identifies the event.
+     * Get unique event identifier.
      * 
      * @return
      */
-    public String getId();
+    public UUID getId();
 
     /**
      * Get alternate id that can be used for correlating events with external
@@ -43,39 +43,39 @@ public interface IDeviceEvent extends IMetadataProvider, Comparable<IDeviceEvent
     public DeviceEventType getEventType();
 
     /**
-     * Get token for site the event pertains to.
+     * Get device id.
      * 
      * @return
      */
-    public String getSiteToken();
+    public UUID getDeviceId();
 
     /**
-     * Get the device assignment the event pertains to.
+     * Get assignment id.
      * 
      * @return
      */
-    public String getDeviceAssignmentToken();
+    public UUID getDeviceAssignmentId();
 
     /**
-     * Get assignment type.
+     * Get customer id if assigned.
      * 
      * @return
      */
-    public DeviceAssignmentType getAssignmentType();
+    public UUID getCustomerId();
 
     /**
-     * Get id of asset module.
+     * Get area id if assigned.
      * 
      * @return
      */
-    public String getAssetModuleId();
+    public UUID getAreaId();
 
     /**
-     * Get id of asset if associated.
+     * Get asset id if assigned.
      * 
      * @return
      */
-    public String getAssetId();
+    public UUID getAssetId();
 
     /**
      * Get the date the event occurred.

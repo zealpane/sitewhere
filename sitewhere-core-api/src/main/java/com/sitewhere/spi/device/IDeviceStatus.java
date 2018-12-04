@@ -7,15 +7,19 @@
  */
 package com.sitewhere.spi.device;
 
-import com.sitewhere.spi.common.IMetadataProvider;
+import java.util.UUID;
+
+import com.sitewhere.spi.common.IColorProvider;
+import com.sitewhere.spi.common.IIconProvider;
+import com.sitewhere.spi.common.IPersistentEntity;
 
 /**
  * Indicates a possible status for a device. A device status is tied to a device
- * specification and can be used for customizing user interfaces.
+ * type and can be used for customizing user interfaces.
  * 
  * @author Derek
  */
-public interface IDeviceStatus extends IMetadataProvider {
+public interface IDeviceStatus extends IPersistentEntity, IColorProvider, IIconProvider {
 
     /**
      * Get the unique status code.
@@ -25,11 +29,11 @@ public interface IDeviceStatus extends IMetadataProvider {
     public String getCode();
 
     /**
-     * Get token for the parent specification.
+     * Get unqiue id for the parent device type.
      * 
      * @return
      */
-    public String getSpecificationToken();
+    public UUID getDeviceTypeId();
 
     /**
      * Name displayed in user interface.
@@ -37,32 +41,4 @@ public interface IDeviceStatus extends IMetadataProvider {
      * @return
      */
     public String getName();
-
-    /**
-     * Background color for user interface.
-     * 
-     * @return
-     */
-    public String getBackgroundColor();
-
-    /**
-     * Foreground color for user interface.
-     * 
-     * @return
-     */
-    public String getForegroundColor();
-
-    /**
-     * Border color for user interface.
-     * 
-     * @return
-     */
-    public String getBorderColor();
-
-    /**
-     * Icon for user interface.
-     * 
-     * @return
-     */
-    public String getIcon();
 }

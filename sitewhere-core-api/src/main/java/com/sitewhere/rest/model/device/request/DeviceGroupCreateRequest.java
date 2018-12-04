@@ -7,14 +7,13 @@
  */
 package com.sitewhere.rest.model.device.request;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.sitewhere.rest.model.common.request.BrandedEntityCreateRequest;
 import com.sitewhere.spi.device.group.IDeviceGroup;
 import com.sitewhere.spi.device.request.IDeviceGroupCreateRequest;
 
@@ -24,13 +23,10 @@ import com.sitewhere.spi.device.request.IDeviceGroupCreateRequest;
  * @author Derek
  */
 @JsonInclude(Include.NON_NULL)
-public class DeviceGroupCreateRequest implements IDeviceGroupCreateRequest, Serializable {
+public class DeviceGroupCreateRequest extends BrandedEntityCreateRequest implements IDeviceGroupCreateRequest {
 
     /** Serialization version identifier */
     private static final long serialVersionUID = 1657559631108464556L;
-
-    /** Unique token */
-    private String token;
 
     /** Group name */
     private String name;
@@ -41,28 +37,12 @@ public class DeviceGroupCreateRequest implements IDeviceGroupCreateRequest, Seri
     /** List of roles */
     private List<String> roles;
 
-    /** Metadata values */
-    private Map<String, String> metadata;
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.sitewhere.spi.device.request.IDeviceGroupCreateRequest#getToken()
-     */
-    public String getToken() {
-	return token;
-    }
-
-    public void setToken(String token) {
-	this.token = token;
-    }
-
     /*
      * (non-Javadoc)
      * 
      * @see com.sitewhere.spi.device.request.IDeviceGroupCreateRequest#getName()
      */
+    @Override
     public String getName() {
 	return name;
     }
@@ -75,9 +55,9 @@ public class DeviceGroupCreateRequest implements IDeviceGroupCreateRequest, Seri
      * (non-Javadoc)
      * 
      * @see
-     * com.sitewhere.spi.device.request.IDeviceGroupCreateRequest#getDescription
-     * ()
+     * com.sitewhere.spi.device.request.IDeviceGroupCreateRequest#getDescription ()
      */
+    @Override
     public String getDescription() {
 	return description;
     }
@@ -89,29 +69,15 @@ public class DeviceGroupCreateRequest implements IDeviceGroupCreateRequest, Seri
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.sitewhere.spi.device.request.IDeviceGroupCreateRequest#getRoles()
+     * @see com.sitewhere.spi.device.request.IDeviceGroupCreateRequest#getRoles()
      */
+    @Override
     public List<String> getRoles() {
 	return roles;
     }
 
     public void setRoles(List<String> roles) {
 	this.roles = roles;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * com.sitewhere.spi.device.request.IDeviceGroupCreateRequest#getMetadata()
-     */
-    public Map<String, String> getMetadata() {
-	return metadata;
-    }
-
-    public void setMetadata(Map<String, String> metadata) {
-	this.metadata = metadata;
     }
 
     public static class Builder {
@@ -140,6 +106,11 @@ public class DeviceGroupCreateRequest implements IDeviceGroupCreateRequest, Seri
 
 	public Builder withDescription(String description) {
 	    request.setDescription(description);
+	    return this;
+	}
+
+	public Builder withImageUrl(String imageUrl) {
+	    request.setImageUrl(imageUrl);
 	    return this;
 	}
 

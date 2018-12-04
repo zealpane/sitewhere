@@ -10,9 +10,8 @@ package com.sitewhere.rest.model.device.asset;
 import java.util.Map;
 
 import com.sitewhere.spi.SiteWhereException;
-import com.sitewhere.spi.asset.IAssetModuleManager;
+import com.sitewhere.spi.asset.IAssetManagement;
 import com.sitewhere.spi.device.event.CommandInitiator;
-import com.sitewhere.spi.device.event.CommandStatus;
 import com.sitewhere.spi.device.event.CommandTarget;
 import com.sitewhere.spi.device.event.IDeviceCommandInvocation;
 
@@ -21,16 +20,15 @@ public class DeviceCommandInvocationWithAsset extends DeviceEventWithAsset imple
     /** Serial version UID */
     private static final long serialVersionUID = 5274138683101218581L;
 
-    public DeviceCommandInvocationWithAsset(IDeviceCommandInvocation wrapped, IAssetModuleManager assets)
+    public DeviceCommandInvocationWithAsset(IDeviceCommandInvocation wrapped, IAssetManagement assetManagement)
 	    throws SiteWhereException {
-	super(wrapped, assets);
+	super(wrapped, assetManagement);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.sitewhere.spi.device.event.IDeviceCommandInvocation#getInitiator()
+     * @see com.sitewhere.spi.device.event.IDeviceCommandInvocation#getInitiator()
      */
     @Override
     public CommandInitiator getInitiator() {
@@ -40,8 +38,7 @@ public class DeviceCommandInvocationWithAsset extends DeviceEventWithAsset imple
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.sitewhere.spi.device.event.IDeviceCommandInvocation#getInitiatorId()
+     * @see com.sitewhere.spi.device.event.IDeviceCommandInvocation#getInitiatorId()
      */
     @Override
     public String getInitiatorId() {
@@ -61,8 +58,7 @@ public class DeviceCommandInvocationWithAsset extends DeviceEventWithAsset imple
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.sitewhere.spi.device.event.IDeviceCommandInvocation#getTargetId()
+     * @see com.sitewhere.spi.device.event.IDeviceCommandInvocation#getTargetId()
      */
     @Override
     public String getTargetId() {
@@ -89,15 +85,5 @@ public class DeviceCommandInvocationWithAsset extends DeviceEventWithAsset imple
     @Override
     public Map<String, String> getParameterValues() {
 	return ((IDeviceCommandInvocation) getWrapped()).getParameterValues();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.event.IDeviceCommandInvocation#getStatus()
-     */
-    @Override
-    public CommandStatus getStatus() {
-	return ((IDeviceCommandInvocation) getWrapped()).getStatus();
     }
 }

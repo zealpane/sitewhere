@@ -14,8 +14,8 @@ package com.sitewhere.rest.model.device.communication;
  */
 public class DeviceRequest {
 
-    /** Hardware id the request applies to */
-    private String hardwareId;
+    /** Device token the request applies to */
+    private String deviceToken;
 
     /** Originating invocation if available */
     private String originator;
@@ -26,12 +26,12 @@ public class DeviceRequest {
     /** Event create request */
     private Object request;
 
-    public String getHardwareId() {
-	return hardwareId;
+    public String getDeviceToken() {
+	return deviceToken;
     }
 
-    public void setHardwareId(String hardwareId) {
-	this.hardwareId = hardwareId;
+    public void setDeviceToken(String deviceToken) {
+	this.deviceToken = deviceToken;
     }
 
     public String getOriginator() {
@@ -74,8 +74,8 @@ public class DeviceRequest {
 	/** Send a device alert event */
 	DeviceAlert,
 
-	/** Send a device measurements event */
-	DeviceMeasurements,
+	/** Send a device measurement event */
+	DeviceMeasurement,
 
 	/** Send a device steam create request */
 	DeviceStream,
@@ -84,9 +84,6 @@ public class DeviceRequest {
 	DeviceStreamData,
 
 	/** Send a command acknowledgement */
-	Acknowledge,
-
-	/** Map a device to a slot on a composite device */
-	MapDevice,
+	Acknowledge
     }
 }

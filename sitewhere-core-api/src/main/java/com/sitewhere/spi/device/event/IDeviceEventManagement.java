@@ -8,68 +8,51 @@
 package com.sitewhere.spi.device.event;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.sitewhere.spi.SiteWhereException;
-import com.sitewhere.spi.device.IDeviceManagement;
-import com.sitewhere.spi.device.command.IDeviceCommand;
 import com.sitewhere.spi.device.event.request.IDeviceAlertCreateRequest;
 import com.sitewhere.spi.device.event.request.IDeviceCommandInvocationCreateRequest;
 import com.sitewhere.spi.device.event.request.IDeviceCommandResponseCreateRequest;
-import com.sitewhere.spi.device.event.request.IDeviceEventCreateRequest;
 import com.sitewhere.spi.device.event.request.IDeviceLocationCreateRequest;
-import com.sitewhere.spi.device.event.request.IDeviceMeasurementsCreateRequest;
+import com.sitewhere.spi.device.event.request.IDeviceMeasurementCreateRequest;
 import com.sitewhere.spi.device.event.request.IDeviceStateChangeCreateRequest;
-import com.sitewhere.spi.device.event.request.IDeviceStreamDataCreateRequest;
 import com.sitewhere.spi.search.IDateRangeSearchCriteria;
 import com.sitewhere.spi.search.ISearchResults;
-import com.sitewhere.spi.server.lifecycle.ITenantLifecycleComponent;
+import com.sitewhere.spi.server.lifecycle.ITenantEngineLifecycleComponent;
 
 /**
  * Interface for device event management operations.
  * 
  * @author Derek
  */
-public interface IDeviceEventManagement extends ITenantLifecycleComponent {
-
-    /**
-     * Set the device management implementation.
-     * 
-     * @param deviceManagement
-     * @throws SiteWhereException
-     */
-    public void setDeviceManagement(IDeviceManagement deviceManagement) throws SiteWhereException;
-
-    /**
-     * Get the device management implementation.
-     * 
-     * @return
-     * @throws SiteWhereException
-     */
-    public IDeviceManagement getDeviceManagement() throws SiteWhereException;
+public interface IDeviceEventManagement extends ITenantEngineLifecycleComponent {
 
     /**
      * Add a batch of events for the given assignment.
      * 
-     * @param assignmentToken
+     * @param deviceAssignmentId
      * @param batch
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceEventBatchResponse addDeviceEventBatch(String assignmentToken, IDeviceEventBatch batch)
+    public IDeviceEventBatchResponse addDeviceEventBatch(UUID deviceAssignmentId, IDeviceEventBatch batch)
 	    throws SiteWhereException;
 
     /**
-     * Get a device event by unique id.
+     * Get a device event by id.
      * 
-     * @param id
+     * @param deviceId
+     * @param eventId
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceEvent getDeviceEventById(String id) throws SiteWhereException;
+    public IDeviceEvent getDeviceEventById(UUID eventId) throws SiteWhereException;
 
     /**
      * Get a device event by alternate (external) id.
      * 
+     * @param deviceId
      * @param alternateId
      * @return
      * @throws SiteWhereException
@@ -77,195 +60,96 @@ public interface IDeviceEventManagement extends ITenantLifecycleComponent {
     public IDeviceEvent getDeviceEventByAlternateId(String alternateId) throws SiteWhereException;
 
     /**
-     * List all events for the given assignment that meet the search criteria.
+     * Add one or more measurements for a given device assignment.
      * 
-     * @param assignmentToken
+     * @param deviceAssignmentId
+     * @param measurement
+     * @return
+     * @throws SiteWhereException
+     */
+    public List<IDeviceMeasurement> addDeviceMeasurements(UUID deviceAssignmentId,
+	    IDeviceMeasurementCreateRequest... measurement) throws SiteWhereException;
+
+    /**
+     * List device measurement entries for an index based on criteria.
+     * 
+     * @param index
+     * @param entityIds
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceEvent> listDeviceEvents(String assignmentToken, IDateRangeSearchCriteria criteria)
-	    throws SiteWhereException;
+    public ISearchResults<IDeviceMeasurement> listDeviceMeasurementsForIndex(DeviceEventIndex index,
+	    List<UUID> entityIds, IDateRangeSearchCriteria criteria) throws SiteWhereException;
 
     /**
-     * Add measurements for a given device assignment.
+     * Add one or more device locations for a given device assignment.
      * 
-     * @param assignmentToken
-     * @param measurements
-     * @return
-     * @throws SiteWhereException
-     */
-    public IDeviceMeasurements addDeviceMeasurements(String assignmentToken,
-	    IDeviceMeasurementsCreateRequest measurements) throws SiteWhereException;
-
-    /**
-     * Gets device measurement entries for an assignment based on criteria.
-     * 
-     * @param assignmentToken
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceMeasurements> listDeviceMeasurements(String assignmentToken,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
-
-    /**
-     * List device measurements for a site.
-     * 
-     * @param siteToken
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceMeasurements> listDeviceMeasurementsForSite(String siteToken,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
-
-    /**
-     * Add location for a given device assignment.
-     * 
-     * @param assignmentToken
+     * @param deviceAssignmentId
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceLocation addDeviceLocation(String assignmentToken, IDeviceLocationCreateRequest request)
+    public List<IDeviceLocation> addDeviceLocations(UUID deviceAssignmentId, IDeviceLocationCreateRequest... request)
 	    throws SiteWhereException;
 
     /**
-     * Gets device location entries for an assignment.
+     * List device location entries for an index based on criteria.
      * 
-     * @param assignmentToken
+     * @param index
+     * @param entityIds
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceLocation> listDeviceLocations(String assignmentToken,
+    public ISearchResults<IDeviceLocation> listDeviceLocationsForIndex(DeviceEventIndex index, List<UUID> entityIds,
 	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
 
     /**
-     * List device locations for a site.
+     * Add one or more device alerts for a given device assignment.
      * 
-     * @param siteToken
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceLocation> listDeviceLocationsForSite(String siteToken,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
-
-    /**
-     * List device locations for the given tokens within the given time range.
-     * 
-     * @param assignmentTokens
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceLocation> listDeviceLocations(List<String> assignmentTokens,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
-
-    /**
-     * Add alert for a given device assignment.
-     * 
-     * @param assignmentToken
+     * @param deviceAssignmentId
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceAlert addDeviceAlert(String assignmentToken, IDeviceAlertCreateRequest request)
+    public List<IDeviceAlert> addDeviceAlerts(UUID deviceAssignmentId, IDeviceAlertCreateRequest... request)
 	    throws SiteWhereException;
 
     /**
-     * Gets the most recent device alert entries for an assignment.
+     * List device location entries for an index based on criteria.
      * 
-     * @param assignmentToken
+     * @param index
+     * @param entityIds
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceAlert> listDeviceAlerts(String assignmentToken, IDateRangeSearchCriteria criteria)
-	    throws SiteWhereException;
+    public ISearchResults<IDeviceAlert> listDeviceAlertsForIndex(DeviceEventIndex index, List<UUID> entityIds,
+	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
 
     /**
-     * List device alerts for a site.
+     * Add one or more device command invocations for the given assignment.
      * 
-     * @param siteToken
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceAlert> listDeviceAlertsForSite(String siteToken, IDateRangeSearchCriteria criteria)
-	    throws SiteWhereException;
-
-    /**
-     * Add a chunk of stream data for a given device assignment.
-     * 
-     * @param assignmentToken
+     * @param deviceAssignmentId
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceStreamData addDeviceStreamData(String assignmentToken, IDeviceStreamDataCreateRequest request)
-	    throws SiteWhereException;
+    public List<IDeviceCommandInvocation> addDeviceCommandInvocations(UUID deviceAssignmentId,
+	    IDeviceCommandInvocationCreateRequest... request) throws SiteWhereException;
 
     /**
-     * Get a single chunk of data from a device stream.
+     * List device command invocation events for an index based on criteria.
      * 
-     * @param assignmentToken
-     * @param streamId
-     * @param sequenceNumber
-     * @return
-     * @throws SiteWhereException
-     */
-    public IDeviceStreamData getDeviceStreamData(String assignmentToken, String streamId, long sequenceNumber)
-	    throws SiteWhereException;
-
-    /**
-     * List all chunks of data in a device assignment that belong to a given
-     * stream and meet the criteria.
-     * 
-     * @param assignmentToken
-     * @param streamId
+     * @param index
+     * @param entityIds
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceStreamData> listDeviceStreamData(String assignmentToken, String streamId,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
-
-    /**
-     * Add a device command invocation event for the given assignment.
-     * 
-     * @param assignmentToken
-     * @param command
-     * @param request
-     * @return
-     * @throws SiteWhereException
-     */
-    public IDeviceCommandInvocation addDeviceCommandInvocation(String assignmentToken, IDeviceCommand command,
-	    IDeviceCommandInvocationCreateRequest request) throws SiteWhereException;
-
-    /**
-     * Gets device command invocations for an assignment based on criteria.
-     * 
-     * @param assignmentToken
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceCommandInvocation> listDeviceCommandInvocations(String assignmentToken,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
-
-    /**
-     * List device command invocations for a site.
-     * 
-     * @param siteToken
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceCommandInvocation> listDeviceCommandInvocationsForSite(String siteToken,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
+    public ISearchResults<IDeviceCommandInvocation> listDeviceCommandInvocationsForIndex(DeviceEventIndex index,
+	    List<UUID> entityIds, IDateRangeSearchCriteria criteria) throws SiteWhereException;
 
     /**
      * List responses associated with a command invocation.
@@ -274,82 +158,52 @@ public interface IDeviceEventManagement extends ITenantLifecycleComponent {
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceCommandResponse> listDeviceCommandInvocationResponses(String invocationId)
+    public ISearchResults<IDeviceCommandResponse> listDeviceCommandInvocationResponses(UUID invocationId)
 	    throws SiteWhereException;
 
     /**
-     * Adds a new device command response event.
+     * Adds one or more device command responses for the given device assignment.
      * 
-     * @param assignmentToken
+     * @param deviceAssignmentId
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceCommandResponse addDeviceCommandResponse(String assignmentToken,
-	    IDeviceCommandResponseCreateRequest request) throws SiteWhereException;
+    public List<IDeviceCommandResponse> addDeviceCommandResponses(UUID deviceAssignmentId,
+	    IDeviceCommandResponseCreateRequest... request) throws SiteWhereException;
 
     /**
-     * Gets the most recent device command response entries for an assignment.
+     * List device command response events for an index based on criteria.
      * 
-     * @param assignmentToken
+     * @param index
+     * @param entityIds
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceCommandResponse> listDeviceCommandResponses(String assignmentToken,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
+    public ISearchResults<IDeviceCommandResponse> listDeviceCommandResponsesForIndex(DeviceEventIndex index,
+	    List<UUID> entityIds, IDateRangeSearchCriteria criteria) throws SiteWhereException;
 
     /**
-     * List device command responses for a site.
+     * Adds one or more device state change events for the given assignment.
      * 
-     * @param siteToken
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceCommandResponse> listDeviceCommandResponsesForSite(String siteToken,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
-
-    /**
-     * Adds a new device state change event.
-     * 
-     * @param assignmentToken
+     * @param deviceAssignmentId
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public IDeviceStateChange addDeviceStateChange(String assignmentToken, IDeviceStateChangeCreateRequest request)
-	    throws SiteWhereException;
+    public List<IDeviceStateChange> addDeviceStateChanges(UUID deviceAssignmentId,
+	    IDeviceStateChangeCreateRequest... request) throws SiteWhereException;
 
     /**
-     * Gets the most recent device state change entries for an assignment.
+     * List device state change events for an index based on criteria.
      * 
-     * @param assignmentToken
+     * @param index
+     * @param entityIds
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public ISearchResults<IDeviceStateChange> listDeviceStateChanges(String assignmentToken,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
-
-    /**
-     * List device state changes for a site.
-     * 
-     * @param siteToken
-     * @param criteria
-     * @return
-     * @throws SiteWhereException
-     */
-    public ISearchResults<IDeviceStateChange> listDeviceStateChangesForSite(String siteToken,
-	    IDateRangeSearchCriteria criteria) throws SiteWhereException;
-
-    /**
-     * Update information for an existing event.
-     * 
-     * @param eventId
-     * @param request
-     * @return
-     * @throws SiteWhereException
-     */
-    public IDeviceEvent updateDeviceEvent(String eventId, IDeviceEventCreateRequest request) throws SiteWhereException;
+    public ISearchResults<IDeviceStateChange> listDeviceStateChangesForIndex(DeviceEventIndex index,
+	    List<UUID> entityIds, IDateRangeSearchCriteria criteria) throws SiteWhereException;
 }

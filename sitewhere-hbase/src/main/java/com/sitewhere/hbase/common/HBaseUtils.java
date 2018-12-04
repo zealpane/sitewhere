@@ -14,6 +14,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.hbase.client.BufferedMutator;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
@@ -22,16 +24,13 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import com.sitewhere.core.SiteWherePersistence;
 import com.sitewhere.hbase.IHBaseContext;
 import com.sitewhere.hbase.ISiteWhereHBase;
 import com.sitewhere.hbase.encoder.IPayloadMarshaler;
 import com.sitewhere.hbase.encoder.PayloadEncoding;
 import com.sitewhere.hbase.encoder.PayloadMarshalerResolver;
-import com.sitewhere.rest.model.common.MetadataProviderEntity;
+import com.sitewhere.rest.model.common.PersistentEntity;
 import com.sitewhere.rest.model.search.Pager;
 import com.sitewhere.rest.model.search.SearchResults;
 import com.sitewhere.spi.SiteWhereException;
@@ -47,7 +46,7 @@ public class HBaseUtils {
 
     /** Static logger instance */
     @SuppressWarnings("unused")
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static Log LOGGER = LogFactory.getLog(HBaseUtils.class);
 
     /**
      * Create or update primary record.
@@ -155,8 +154,8 @@ public class HBaseUtils {
     }
 
     /**
-     * Get all matching records, sort them, and get matching pages. TODO: This
-     * is not efficient since it always processes all records.
+     * Get all matching records, sort them, and get matching pages. TODO: This is
+     * not efficient since it always processes all records.
      * 
      * @param context
      * @param tableName
@@ -256,11 +255,10 @@ public class HBaseUtils {
      * @return
      * @throws SiteWhereException
      */
-    public static <T extends MetadataProviderEntity> T delete(IHBaseContext context, IPayloadMarshaler marshaler,
+    public static <T extends PersistentEntity> T delete(IHBaseContext context, IPayloadMarshaler marshaler,
 	    byte[] tableName, String token, boolean force, IRowKeyBuilder builder, Class<T> type)
 	    throws SiteWhereException {
 	T existing = get(context, tableName, token, builder, type);
-	existing.setDeleted(true);
 
 	byte[] primary = builder.buildPrimaryKey(context, token);
 	if (force) {
@@ -277,7 +275,6 @@ public class HBaseUtils {
 	    }
 	} else {
 	    byte[] marker = { (byte) 0x01 };
-	    SiteWherePersistence.setUpdatedEntityMetadata(existing);
 	    byte[] updated = marshaler.encode(existing);
 
 	    Table table = null;

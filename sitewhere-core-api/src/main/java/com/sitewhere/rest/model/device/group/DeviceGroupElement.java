@@ -10,11 +10,10 @@ package com.sitewhere.rest.model.device.group;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.sitewhere.rest.model.device.Device;
-import com.sitewhere.spi.device.group.GroupElementType;
 import com.sitewhere.spi.device.group.IDeviceGroup;
 import com.sitewhere.spi.device.group.IDeviceGroupElement;
 
@@ -29,79 +28,67 @@ public class DeviceGroupElement implements IDeviceGroupElement, Serializable {
     /** Serialization version identifier */
     private static final long serialVersionUID = -5565956152579362877L;
 
-    /** Parent group token */
-    private String groupToken;
+    /** Unqiue id */
+    private UUID id;
 
-    /** Element index */
-    private long index;
+    /** Parent group id */
+    private UUID groupId;
 
-    /** Element type */
-    private GroupElementType type;
+    /** Device id (null if nested group id specified) */
+    private UUID deviceId;
 
-    /** Element type */
-    private String elementId;
+    /** Nested group id (null if device id specified) */
+    private UUID nestedGroupId;
 
     /** List of roles for the element */
     private List<String> roles = new ArrayList<String>();
 
-    /** FIELDS BELOW DEPEND ON MARSHALING PARAMETERS */
-
-    /** Referenced device */
-    private Device device;
-
-    /** Referenced device group */
-    private DeviceGroup deviceGroup;
-
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.group.IDeviceGroupElement#getGroupToken()
+     * @see com.sitewhere.spi.device.group.IDeviceGroupElement#getId()
      */
-    public String getGroupToken() {
-	return groupToken;
+    @Override
+    public UUID getId() {
+	return id;
     }
 
-    public void setGroupToken(String groupToken) {
-	this.groupToken = groupToken;
+    public void setId(UUID id) {
+	this.id = id;
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.group.IDeviceGroupElement#getIndex()
+     * @see com.sitewhere.spi.device.group.IDeviceGroupElement#getGroupId()
      */
-    public long getIndex() {
-	return index;
+    @Override
+    public UUID getGroupId() {
+	return groupId;
     }
 
-    public void setIndex(long index) {
-	this.index = index;
+    public void setGroupId(UUID groupId) {
+	this.groupId = groupId;
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.group.IDeviceGroupElement#getType()
+     * @see com.sitewhere.spi.device.group.IDeviceGroupElement#getDeviceId()
      */
-    public GroupElementType getType() {
-	return type;
+    @Override
+    public UUID getDeviceId() {
+	return deviceId;
     }
 
-    public void setType(GroupElementType type) {
-	this.type = type;
+    public void setDeviceId(UUID deviceId) {
+	this.deviceId = deviceId;
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.group.IDeviceGroupElement#getElementId()
+     * @see com.sitewhere.spi.device.group.IDeviceGroupElement#getNestedGroupId()
      */
-    public String getElementId() {
-	return elementId;
+    @Override
+    public UUID getNestedGroupId() {
+	return nestedGroupId;
     }
 
-    public void setElementId(String elementId) {
-	this.elementId = elementId;
+    public void setNestedGroupId(UUID nestedGroupId) {
+	this.nestedGroupId = nestedGroupId;
     }
 
     /*
@@ -109,27 +96,12 @@ public class DeviceGroupElement implements IDeviceGroupElement, Serializable {
      * 
      * @see com.sitewhere.spi.device.group.IDeviceGroupElement#getRoles()
      */
+    @Override
     public List<String> getRoles() {
 	return roles;
     }
 
     public void setRoles(List<String> roles) {
 	this.roles = roles;
-    }
-
-    public Device getDevice() {
-	return device;
-    }
-
-    public void setDevice(Device device) {
-	this.device = device;
-    }
-
-    public DeviceGroup getDeviceGroup() {
-	return deviceGroup;
-    }
-
-    public void setDeviceGroup(DeviceGroup deviceGroup) {
-	this.deviceGroup = deviceGroup;
     }
 }

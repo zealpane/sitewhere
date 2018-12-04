@@ -9,22 +9,14 @@ package com.sitewhere.spi.tenant;
 
 import java.util.List;
 
-import com.sitewhere.spi.common.IMetadataProviderEntity;
-import com.sitewhere.spi.server.ITenantRuntimeState;
+import com.sitewhere.spi.common.IBrandedEntity;
 
 /**
  * Interface for information about a tenant.
  * 
  * @author Derek
  */
-public interface ITenant extends IMetadataProviderEntity {
-
-    /**
-     * Get unique tenant id.
-     * 
-     * @return
-     */
-    public String getId();
+public interface ITenant extends IBrandedEntity {
 
     /**
      * Get tenant name.
@@ -41,13 +33,6 @@ public interface ITenant extends IMetadataProviderEntity {
     public String getAuthenticationToken();
 
     /**
-     * Get URL for tenant logo.
-     * 
-     * @return
-     */
-    public String getLogoUrl();
-
-    /**
      * Get list of users authorized to access the tenant.
      * 
      * @return
@@ -62,9 +47,9 @@ public interface ITenant extends IMetadataProviderEntity {
     public String getTenantTemplateId();
 
     /**
-     * Get runtime state of tenant engine.
+     * Get id of dataset template used to populate tenant.
      * 
      * @return
      */
-    public ITenantRuntimeState getEngineState();
+    public String getDatasetTemplateId();
 }

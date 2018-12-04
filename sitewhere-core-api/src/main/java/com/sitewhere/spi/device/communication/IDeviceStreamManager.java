@@ -8,12 +8,12 @@
 package com.sitewhere.spi.device.communication;
 
 import com.sitewhere.spi.SiteWhereException;
-import com.sitewhere.spi.device.event.IDeviceStreamData;
 import com.sitewhere.spi.device.event.request.IDeviceStreamCreateRequest;
-import com.sitewhere.spi.device.event.request.IDeviceStreamDataCreateRequest;
 import com.sitewhere.spi.device.event.request.ISendDeviceStreamDataRequest;
 import com.sitewhere.spi.device.streaming.IDeviceStream;
-import com.sitewhere.spi.server.lifecycle.ITenantLifecycleComponent;
+import com.sitewhere.spi.device.streaming.IDeviceStreamData;
+import com.sitewhere.spi.device.streaming.request.IDeviceStreamDataCreateRequest;
+import com.sitewhere.spi.server.lifecycle.ITenantEngineLifecycleComponent;
 
 /**
  * Manages creation of {@link IDeviceStream} entities based on requests from
@@ -21,36 +21,36 @@ import com.sitewhere.spi.server.lifecycle.ITenantLifecycleComponent;
  * 
  * @author Derek
  */
-public interface IDeviceStreamManager extends ITenantLifecycleComponent {
+public interface IDeviceStreamManager extends ITenantEngineLifecycleComponent {
 
     /**
      * Handle request for creating a new {@link IDeviceStream}.
      * 
-     * @param hardwareId
+     * @param deviceToken
      * @param request
      * @throws SiteWhereException
      */
-    public void handleDeviceStreamRequest(String hardwareId, IDeviceStreamCreateRequest request)
+    public void handleDeviceStreamRequest(String deviceToken, IDeviceStreamCreateRequest request)
 	    throws SiteWhereException;
 
     /**
      * Handle request for creating new {@link IDeviceStreamData}.
      * 
-     * @param hardwareId
+     * @param deviceToken
      * @param request
      * @throws SiteWhereException
      */
-    public void handleDeviceStreamDataRequest(String hardwareId, IDeviceStreamDataCreateRequest request)
+    public void handleDeviceStreamDataRequest(String deviceToken, IDeviceStreamDataCreateRequest request)
 	    throws SiteWhereException;
 
     /**
      * Handle request for sending data from an {@link IDeviceStream} to a remote
      * device.
      * 
-     * @param hardwareId
+     * @param deviceToken
      * @param request
      * @throws SiteWhereException
      */
-    public void handleSendDeviceStreamDataRequest(String hardwareId, ISendDeviceStreamDataRequest request)
+    public void handleSendDeviceStreamDataRequest(String deviceToken, ISendDeviceStreamDataRequest request)
 	    throws SiteWhereException;
 }

@@ -1,0 +1,18 @@
+description = 'SiteWhere Configuration Components'
+
+dependencies {
+	compile project(':sitewhere-core')
+}
+test {
+    exclude '**/*'
+}
+
+// Publish jar.
+apply plugin: 'maven-publish'
+publishing {
+	publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+	}
+}

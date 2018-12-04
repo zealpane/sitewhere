@@ -14,8 +14,8 @@ package com.sitewhere.solr;
  */
 public enum SolrEventType {
 
-    /** Event represents IDeviceMeasurements */
-    Measurements,
+    /** Event represents IDeviceMeasurement */
+    Measurement,
 
     /** Event represents IDeviceLocation */
     Location,

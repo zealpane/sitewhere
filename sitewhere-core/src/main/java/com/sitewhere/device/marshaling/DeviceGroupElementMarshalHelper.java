@@ -7,19 +7,19 @@
  */
 package com.sitewhere.device.marshaling;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.sitewhere.SiteWhere;
 import com.sitewhere.rest.model.device.Device;
 import com.sitewhere.rest.model.device.group.DeviceGroup;
 import com.sitewhere.rest.model.device.group.DeviceGroupElement;
+import com.sitewhere.rest.model.device.marshaling.MarshaledDeviceGroupElement;
 import com.sitewhere.spi.SiteWhereException;
-import com.sitewhere.spi.asset.IAssetModuleManager;
+import com.sitewhere.spi.asset.IAssetManagement;
 import com.sitewhere.spi.device.IDevice;
+import com.sitewhere.spi.device.IDeviceManagement;
 import com.sitewhere.spi.device.group.IDeviceGroup;
 import com.sitewhere.spi.device.group.IDeviceGroupElement;
-import com.sitewhere.spi.tenant.ITenant;
 
 /**
  * Configurable helper class that allows {@link DeviceGroupElement} model
@@ -30,10 +30,10 @@ import com.sitewhere.spi.tenant.ITenant;
 public class DeviceGroupElementMarshalHelper {
 
     /** Static logger instance */
-    private static Logger LOGGER = LogManager.getLogger();
+    private static Logger LOGGER = LoggerFactory.getLogger(DeviceGroupElementMarshalHelper.class);
 
-    /** Tenant */
-    private ITenant tenant;
+    /** Device Management */
+    private IDeviceManagement deviceManagement;
 
     /**
      * Indicates whether detailed device or device group information is to be
@@ -44,10 +44,14 @@ public class DeviceGroupElementMarshalHelper {
     /** Helper class for enriching device information */
     private DeviceMarshalHelper deviceHelper;
 
-    public DeviceGroupElementMarshalHelper(ITenant tenant) {
-	this.tenant = tenant;
-	this.deviceHelper = new DeviceMarshalHelper(tenant).setIncludeSpecification(true).setIncludeAsset(true)
+    /** Helper class for enriching group information */
+    private DeviceGroupMarshalHelper groupHelper;
+
+    public DeviceGroupElementMarshalHelper(IDeviceManagement deviceManagement) {
+	this.deviceManagement = deviceManagement;
+	this.deviceHelper = new DeviceMarshalHelper(deviceManagement).setIncludeDeviceType(true)
 		.setIncludeAssignment(true);
+	this.groupHelper = new DeviceGroupMarshalHelper();
     }
 
     /**
@@ -58,38 +62,31 @@ public class DeviceGroupElementMarshalHelper {
      * @return
      * @throws SiteWhereException
      */
-    public DeviceGroupElement convert(IDeviceGroupElement source, IAssetModuleManager manager)
+    public MarshaledDeviceGroupElement convert(IDeviceGroupElement source, IAssetManagement assetManagement)
 	    throws SiteWhereException {
-	DeviceGroupElement result = new DeviceGroupElement();
-	result.setGroupToken(source.getGroupToken());
-	result.setIndex(source.getIndex());
-	result.setType(source.getType());
-	result.setElementId(source.getElementId());
+	MarshaledDeviceGroupElement result = new MarshaledDeviceGroupElement();
+	result.setId(source.getId());
+	result.setGroupId(source.getGroupId());
+	result.setDeviceId(source.getDeviceId());
+	result.setNestedGroupId(source.getNestedGroupId());
 	result.getRoles().addAll(source.getRoles());
 	if (isIncludeDetails()) {
-	    switch (source.getType()) {
-	    case Device: {
-		IDevice device = SiteWhere.getServer().getDeviceManagement(tenant)
-			.getDeviceByHardwareId(source.getElementId());
+	    if (source.getDeviceId() != null) {
+		IDevice device = getDeviceManagement().getDevice(source.getDeviceId());
 		if (device != null) {
-		    Device inflated = deviceHelper.convert(device, manager);
+		    Device inflated = getDeviceHelper().convert(device, assetManagement);
 		    result.setDevice(inflated);
 		} else {
-		    LOGGER.warn("Group references invalid device: " + source.getElementId());
+		    LOGGER.warn("Group references invalid device: " + source.getDeviceId());
 		}
-		break;
-	    }
-	    case Group: {
-		IDeviceGroup group = SiteWhere.getServer().getDeviceManagement(tenant)
-			.getDeviceGroup(source.getElementId());
+	    } else if (source.getNestedGroupId() != null) {
+		IDeviceGroup group = getDeviceManagement().getDeviceGroup(source.getNestedGroupId());
 		if (group != null) {
-		    DeviceGroup inflated = DeviceGroup.copy(group);
+		    DeviceGroup inflated = getGroupHelper().convert(group);
 		    result.setDeviceGroup(inflated);
 		} else {
-		    LOGGER.warn("Group references invalid subgroup: " + source.getElementId());
+		    LOGGER.warn("Group references invalid nested group: " + source.getNestedGroupId());
 		}
-		break;
-	    }
 	    }
 	}
 	return result;
@@ -102,5 +99,29 @@ public class DeviceGroupElementMarshalHelper {
     public DeviceGroupElementMarshalHelper setIncludeDetails(boolean includeDetails) {
 	this.includeDetails = includeDetails;
 	return this;
+    }
+
+    public IDeviceManagement getDeviceManagement() {
+	return deviceManagement;
+    }
+
+    public void setDeviceManagement(IDeviceManagement deviceManagement) {
+	this.deviceManagement = deviceManagement;
+    }
+
+    public DeviceMarshalHelper getDeviceHelper() {
+	return deviceHelper;
+    }
+
+    public void setDeviceHelper(DeviceMarshalHelper deviceHelper) {
+	this.deviceHelper = deviceHelper;
+    }
+
+    public DeviceGroupMarshalHelper getGroupHelper() {
+	return groupHelper;
+    }
+
+    public void setGroupHelper(DeviceGroupMarshalHelper groupHelper) {
+	this.groupHelper = groupHelper;
     }
 }

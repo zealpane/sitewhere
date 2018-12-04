@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
@@ -18,15 +19,14 @@ import org.apache.solr.common.SolrInputDocument;
 import com.sitewhere.rest.model.device.event.DeviceAlert;
 import com.sitewhere.rest.model.device.event.DeviceEvent;
 import com.sitewhere.rest.model.device.event.DeviceLocation;
-import com.sitewhere.rest.model.device.event.DeviceMeasurements;
+import com.sitewhere.rest.model.device.event.DeviceMeasurement;
 import com.sitewhere.spi.SiteWhereException;
-import com.sitewhere.spi.device.DeviceAssignmentType;
 import com.sitewhere.spi.device.event.AlertLevel;
 import com.sitewhere.spi.device.event.AlertSource;
 import com.sitewhere.spi.device.event.IDeviceAlert;
 import com.sitewhere.spi.device.event.IDeviceEvent;
 import com.sitewhere.spi.device.event.IDeviceLocation;
-import com.sitewhere.spi.device.event.IDeviceMeasurements;
+import com.sitewhere.spi.device.event.IDeviceMeasurement;
 
 /**
  * Factory that creates indexable Solr objects from SiteWhere objects.
@@ -37,20 +37,18 @@ public class SiteWhereSolrFactory {
 
     /**
      * Create a {@link SolrInputDocument} based on information in
-     * {@link IDeviceMeasurements}.
+     * {@link IDeviceMeasurement}.
      * 
-     * @param measurements
+     * @param mx
      * @return
      * @throws SiteWhereException
      */
-    public static SolrInputDocument createDocumentFromMeasurements(IDeviceMeasurements measurements)
-	    throws SiteWhereException {
+    public static SolrInputDocument createDocumentFromMeasurement(IDeviceMeasurement mx) throws SiteWhereException {
 	SolrInputDocument document = new SolrInputDocument();
-	document.addField(ISolrFields.EVENT_TYPE, SolrEventType.Measurements.name());
-	addFieldsForEvent(document, measurements);
-	for (String key : measurements.getMeasurements().keySet()) {
-	    document.addField(ISolrFields.MEASUREMENT_PREFIX + key, measurements.getMeasurement(key));
-	}
+	document.addField(ISolrFields.EVENT_TYPE, SolrEventType.Measurement.name());
+	addFieldsForEvent(document, mx);
+	document.addField(ISolrFields.MX_NAME, mx.getName());
+	document.addField(ISolrFields.MX_VALUE, mx.getValue());
 	return document;
     }
 
@@ -108,8 +106,8 @@ public class SiteWhereSolrFactory {
 	case Location: {
 	    return parseLocationFromDocument(document);
 	}
-	case Measurements: {
-	    return parseMeasurementsFromDocument(document);
+	case Measurement: {
+	    return parseMeasurementFromDocument(document);
 	}
 	case Alert: {
 	    return parseAlertFromDocument(document);
@@ -149,29 +147,23 @@ public class SiteWhereSolrFactory {
     }
 
     /**
-     * Parse an {@link IDeviceMeasurements} record from a {@link SolrDocument}.
+     * Parse an {@link IDeviceMeasurement} record from a {@link SolrDocument}.
      * 
      * @param document
      * @return
      * @throws SiteWhereException
      */
-    protected static IDeviceMeasurements parseMeasurementsFromDocument(SolrDocument document)
-	    throws SiteWhereException {
-	DeviceMeasurements measurements = new DeviceMeasurements();
+    protected static IDeviceMeasurement parseMeasurementFromDocument(SolrDocument document) throws SiteWhereException {
+	DeviceMeasurement mx = new DeviceMeasurement();
 
-	Iterator<String> names = document.getFieldNames().iterator();
-	int mxLength = ISolrFields.MEASUREMENT_PREFIX.length();
-	while (names.hasNext()) {
-	    String name = names.next();
-	    if (name.startsWith(ISolrFields.MEASUREMENT_PREFIX)) {
-		String metaName = name.substring(mxLength);
-		Double metaValue = (Double) document.get(name);
-		measurements.addOrReplaceMeasurement(metaName, metaValue);
-	    }
-	}
+	String name = (String) document.get(ISolrFields.MX_NAME);
+	Double value = (Double) document.get(ISolrFields.MX_VALUE);
 
-	addFieldsFromEventDocument(document, measurements);
-	return measurements;
+	mx.setName(name);
+	mx.setValue(value);
+
+	addFieldsFromEventDocument(document, mx);
+	return mx;
     }
 
     /**
@@ -207,19 +199,19 @@ public class SiteWhereSolrFactory {
      */
     protected static void addFieldsFromEventDocument(SolrDocument document, DeviceEvent event)
 	    throws SiteWhereException {
-	String id = (String) document.get(ISolrFields.EVENT_ID);
-	String assignmentToken = (String) document.get(ISolrFields.ASSIGNMENT_TOKEN);
-	String assignmentTypeStr = (String) document.get(ISolrFields.ASSIGNMENT_TYPE);
-	String assetId = (String) document.get(ISolrFields.ASSET_ID);
-	String siteToken = (String) document.get(ISolrFields.SITE_TOKEN);
+	UUID id = (UUID) document.get(ISolrFields.EVENT_ID);
+	UUID deviceId = (UUID) document.get(ISolrFields.DEVICE_ID);
+	UUID assignmentId = (UUID) document.get(ISolrFields.ASSIGNMENT_ID);
+	UUID areaId = (UUID) document.get(ISolrFields.AREA_ID);
+	UUID assetId = (UUID) document.get(ISolrFields.ASSET_ID);
 	Date eventDate = (Date) document.get(ISolrFields.EVENT_DATE);
 	Date receivedDate = (Date) document.get(ISolrFields.RECEIVED_DATE);
 
 	event.setId(id);
-	event.setDeviceAssignmentToken(assignmentToken);
-	event.setAssignmentType(DeviceAssignmentType.valueOf(assignmentTypeStr));
+	event.setDeviceId(deviceId);
+	event.setDeviceAssignmentId(assignmentId);
+	event.setAreaId(areaId);
 	event.setAssetId(assetId);
-	event.setSiteToken(siteToken);
 	event.setEventDate(eventDate);
 	event.setReceivedDate(receivedDate);
 
@@ -230,7 +222,7 @@ public class SiteWhereSolrFactory {
 	    if (name.startsWith(ISolrFields.META_PREFIX)) {
 		String metaName = name.substring(metaLength);
 		String metaValue = (String) document.get(name);
-		event.addOrReplaceMetadata(metaName, metaValue);
+		event.getMetadata().put(metaName, metaValue);
 	    }
 	}
     }
@@ -244,10 +236,10 @@ public class SiteWhereSolrFactory {
      */
     protected static void addFieldsForEvent(SolrInputDocument document, IDeviceEvent event) throws SiteWhereException {
 	document.addField(ISolrFields.EVENT_ID, event.getId());
-	document.addField(ISolrFields.ASSIGNMENT_TOKEN, event.getDeviceAssignmentToken());
-	document.addField(ISolrFields.ASSIGNMENT_TYPE, event.getAssignmentType().name());
+	document.addField(ISolrFields.DEVICE_ID, event.getDeviceId());
+	document.addField(ISolrFields.ASSIGNMENT_ID, event.getDeviceAssignmentId());
+	document.addField(ISolrFields.AREA_ID, event.getAreaId());
 	document.addField(ISolrFields.ASSET_ID, event.getAssetId());
-	document.addField(ISolrFields.SITE_TOKEN, event.getSiteToken());
 	document.addField(ISolrFields.EVENT_DATE, event.getEventDate());
 	document.addField(ISolrFields.RECEIVED_DATE, event.getReceivedDate());
 	addMetadata(document, event.getMetadata());

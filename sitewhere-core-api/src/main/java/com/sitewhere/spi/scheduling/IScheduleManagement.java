@@ -12,14 +12,14 @@ import com.sitewhere.spi.scheduling.request.IScheduleCreateRequest;
 import com.sitewhere.spi.scheduling.request.IScheduledJobCreateRequest;
 import com.sitewhere.spi.search.ISearchCriteria;
 import com.sitewhere.spi.search.ISearchResults;
-import com.sitewhere.spi.server.lifecycle.ITenantLifecycleComponent;
+import com.sitewhere.spi.server.lifecycle.ITenantEngineLifecycleComponent;
 
 /**
  * Management interface for persistent scheduling implementations.
  * 
  * @author Derek
  */
-public interface IScheduleManagement extends ITenantLifecycleComponent {
+public interface IScheduleManagement extends ITenantEngineLifecycleComponent {
 
     /**
      * Create a new schedule.
@@ -62,11 +62,10 @@ public interface IScheduleManagement extends ITenantLifecycleComponent {
      * Delete an existing schedule.
      * 
      * @param token
-     * @param force
      * @return
      * @throws SiteWhereException
      */
-    public ISchedule deleteSchedule(String token, boolean force) throws SiteWhereException;
+    public ISchedule deleteSchedule(String token) throws SiteWhereException;
 
     /**
      * Create a new scheduled job.
@@ -109,9 +108,8 @@ public interface IScheduleManagement extends ITenantLifecycleComponent {
      * Delete an existing scheduled job.
      * 
      * @param token
-     * @param force
      * @return
      * @throws SiteWhereException
      */
-    public IScheduledJob deleteScheduledJob(String token, boolean force) throws SiteWhereException;
+    public IScheduledJob deleteScheduledJob(String token) throws SiteWhereException;
 }

@@ -38,17 +38,11 @@ public enum LifecycleComponentType {
     /** Search provider */
     SearchProvider,
 
-    /** Outbound processor chain */
-    OutboundProcessorChain,
-
-    /** Outbound event processor */
-    OutboundEventProcessor,
+    /** Outbound connector */
+    OutboundConnector,
 
     /** Outbound event processor filter */
     OutboundEventProcessorFilter,
-
-    /** Inbound processor chain */
-    InboundProcessorChain,
 
     /** Inbound event processor */
     InboundEventProcessor,
@@ -89,11 +83,11 @@ public enum LifecycleComponentType {
     /** Registration manager */
     RegistrationManager,
 
-    /** Symbol generator manager */
-    SymbolGeneratorManager,
+    /** Label generator manager */
+    LabelGeneratorManager,
 
-    /** Symbol generator */
-    SymbolGenerator,
+    /** Label generator */
+    LabelGenerator,
 
     /** Batch operation manager */
     BatchOperationManager,
@@ -127,6 +121,12 @@ public enum LifecycleComponentType {
 
     /** Tenant template manager */
     TenantTemplateManager,
+
+    /** Dataset template manager */
+    DatasetTemplateManager,
+
+    /** Script template manager */
+    ScriptTemplateManager,
 
     /** Unclassified component */
     Other,

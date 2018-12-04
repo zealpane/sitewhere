@@ -7,15 +7,18 @@
  */
 package com.sitewhere.spi.device.event.request;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Map;
+
+import com.sitewhere.spi.device.event.DeviceEventType;
 
 /**
  * Interface for arguments needed to create a device event.
  * 
  * @author Derek
  */
-public interface IDeviceEventCreateRequest {
+public interface IDeviceEventCreateRequest extends Serializable {
 
     /**
      * Get alternate id that can be used for correlating events with external
@@ -24,6 +27,13 @@ public interface IDeviceEventCreateRequest {
      * @return
      */
     public String getAlternateId();
+
+    /**
+     * Get event type indicator.
+     * 
+     * @return
+     */
+    public DeviceEventType getEventType();
 
     /**
      * Get the date on which the event occurred.
@@ -39,14 +49,6 @@ public interface IDeviceEventCreateRequest {
      * @return
      */
     public boolean isUpdateState();
-
-    /**
-     * Set indicator for whether state information on the device assignment
-     * should be updated.
-     * 
-     * @param update
-     */
-    public void setUpdateState(boolean update);
 
     /**
      * Get metadata values.

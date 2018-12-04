@@ -7,10 +7,26 @@
  */
 package com.sitewhere.spi.device.event;
 
+import java.io.Serializable;
+
 /**
- * Single measurement associated with a device assignment.
+ * Measurement associated with a device assignment at a point in time.
  * 
  * @author Derek
  */
-public interface IDeviceMeasurement extends IDeviceEvent, IMeasurementEntry {
+public interface IDeviceMeasurement extends IDeviceEvent, Serializable {
+
+    /**
+     * Get measurement name.
+     * 
+     * @return
+     */
+    public String getName();
+
+    /**
+     * Get measurement value.
+     * 
+     * @return
+     */
+    public Double getValue();
 }

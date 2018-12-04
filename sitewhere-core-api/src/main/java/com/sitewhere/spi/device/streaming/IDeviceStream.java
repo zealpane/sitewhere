@@ -7,21 +7,23 @@
  */
 package com.sitewhere.spi.device.streaming;
 
-import com.sitewhere.spi.common.IMetadataProviderEntity;
+import java.util.UUID;
+
+import com.sitewhere.spi.common.IPersistentEntity;
 
 /**
  * A data stream associated with a device assignment.
  * 
  * @author Derek
  */
-public interface IDeviceStream extends IMetadataProviderEntity {
+public interface IDeviceStream extends IPersistentEntity {
 
     /**
      * Get assignment stream belongs to.
      * 
      * @return
      */
-    public String getAssignmentToken();
+    public UUID getAssignmentId();
 
     /**
      * Get unique identifier for stream within assignment.

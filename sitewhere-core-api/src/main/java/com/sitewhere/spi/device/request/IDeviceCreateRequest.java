@@ -8,8 +8,8 @@
 package com.sitewhere.spi.device.request;
 
 import java.util.List;
-import java.util.Map;
 
+import com.sitewhere.spi.common.request.IPersistentEntityCreateRequest;
 import com.sitewhere.spi.device.IDeviceElementMapping;
 
 /**
@@ -17,35 +17,21 @@ import com.sitewhere.spi.device.IDeviceElementMapping;
  * 
  * @author Derek
  */
-public interface IDeviceCreateRequest {
+public interface IDeviceCreateRequest extends IPersistentEntityCreateRequest {
 
     /**
-     * Get the unique device hardware id.
+     * Get the device type token.
      * 
      * @return
      */
-    public String getHardwareId();
+    public String getDeviceTypeToken();
 
     /**
-     * Get the site token.
+     * Get parent device token (if nested).
      * 
      * @return
      */
-    public String getSiteToken();
-
-    /**
-     * Get the device specification token.
-     * 
-     * @return
-     */
-    public String getSpecificationToken();
-
-    /**
-     * Get the parent hardware id (if nested).
-     * 
-     * @return
-     */
-    public String getParentHardwareId();
+    public String getParentDeviceToken();
 
     /**
      * Indicates whether parent reference should be removed.
@@ -59,7 +45,7 @@ public interface IDeviceCreateRequest {
      * 
      * @return
      */
-    public List<IDeviceElementMapping> getDeviceElementMappings();
+    public List<? extends IDeviceElementMapping> getDeviceElementMappings();
 
     /**
      * Get comments associated with device.
@@ -74,11 +60,4 @@ public interface IDeviceCreateRequest {
      * @return
      */
     public String getStatus();
-
-    /**
-     * Get metadata values.
-     * 
-     * @return
-     */
-    public Map<String, String> getMetadata();
 }

@@ -14,10 +14,7 @@ package com.sitewhere.spi.device.event;
  */
 public enum DeviceEventType {
 
-    /** Group of measurements */
-    Measurements,
-
-    /** Single measurement */
+    /** Measurement */
     Measurement,
 
     /** Geospatial location */
@@ -25,9 +22,6 @@ public enum DeviceEventType {
 
     /** Exception condtion alert */
     Alert,
-
-    /** Single chunk of data from a binary data stream */
-    StreamData,
 
     /** Invocation of device command */
     CommandInvocation,

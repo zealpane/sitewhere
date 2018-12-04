@@ -23,22 +23,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.sitewhere.rest.client.SiteWhereClient;
+import com.sitewhere.rest.model.area.Zone;
+import com.sitewhere.rest.model.area.request.ZoneCreateRequest;
 import com.sitewhere.rest.model.common.Location;
 import com.sitewhere.rest.model.device.Device;
 import com.sitewhere.rest.model.device.DeviceAssignment;
-import com.sitewhere.rest.model.device.Zone;
-import com.sitewhere.rest.model.device.batch.BatchOperation;
 import com.sitewhere.rest.model.device.event.DeviceEventBatch;
 import com.sitewhere.rest.model.device.event.request.DeviceAlertCreateRequest;
 import com.sitewhere.rest.model.device.event.request.DeviceCommandInvocationCreateRequest;
 import com.sitewhere.rest.model.device.event.request.DeviceLocationCreateRequest;
-import com.sitewhere.rest.model.device.event.request.DeviceMeasurementsCreateRequest;
+import com.sitewhere.rest.model.device.event.request.DeviceMeasurementCreateRequest;
 import com.sitewhere.rest.model.device.group.DeviceGroup;
 import com.sitewhere.rest.model.device.request.DeviceAssignmentCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceGroupCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceGroupElementCreateRequest;
-import com.sitewhere.rest.model.device.request.ZoneCreateRequest;
 import com.sitewhere.rest.model.device.streaming.DeviceStream;
 import com.sitewhere.rest.model.search.AssetSearchResults;
 import com.sitewhere.rest.model.search.DateRangeSearchCriteria;
@@ -53,12 +52,10 @@ import com.sitewhere.spi.ISiteWhereClient;
 import com.sitewhere.spi.SiteWhereException;
 import com.sitewhere.spi.SiteWhereSystemException;
 import com.sitewhere.spi.device.DeviceAssignmentStatus;
-import com.sitewhere.spi.device.DeviceAssignmentType;
 import com.sitewhere.spi.device.event.AlertLevel;
 import com.sitewhere.spi.device.event.AlertSource;
 import com.sitewhere.spi.device.event.CommandInitiator;
 import com.sitewhere.spi.device.event.CommandTarget;
-import com.sitewhere.spi.device.group.GroupElementType;
 import com.sitewhere.spi.error.ErrorCode;
 
 /**
@@ -68,8 +65,8 @@ import com.sitewhere.spi.error.ErrorCode;
  */
 public class ApiTests {
 
-    /** Device specification id used in tests */
-    public static final String TEST_SPECIFICATION_TOKEN = "293749827342243827349";
+    /** Device type token used in tests */
+    public static final String TEST_DEVICE_TYPE_TOKEN = "293749827342243827349";
 
     /** Hardware id used for test cases */
     public static final String TEST_HARDWARE_ID = "12356789-TEST-123";
@@ -110,8 +107,8 @@ public class ApiTests {
 
 	// Test initial create.
 	DeviceCreateRequest request = new DeviceCreateRequest();
-	request.setHardwareId(TEST_HARDWARE_ID);
-	request.setSpecificationToken(TEST_SPECIFICATION_TOKEN);
+	request.setToken(TEST_HARDWARE_ID);
+	request.setDeviceTypeToken(TEST_DEVICE_TYPE_TOKEN);
 	request.setComments("This is a test device.");
 	Map<String, String> metadata = new HashMap<String, String>();
 	metadata.put("name1", "value1");
@@ -142,7 +139,7 @@ public class ApiTests {
 	// Should not allow hardware id to be updated.
 	try {
 	    update = new DeviceCreateRequest();
-	    update.setHardwareId("xxx");
+	    update.setToken("xxx");
 	    client.updateDevice(TEST_HARDWARE_ID, update);
 	    Assert.fail("Device update allowed update of hardware id.");
 	} catch (SiteWhereSystemException e) {
@@ -154,15 +151,12 @@ public class ApiTests {
 	    device = client.createDevice(request);
 	    Assert.fail("Create device allowed duplicate.");
 	} catch (SiteWhereException e) {
-	    verifyErrorCode(e, ErrorCode.DuplicateHardwareId);
+	    verifyErrorCode(e, ErrorCode.DuplicateDeviceToken);
 	}
 
 	// Create a device assignment.
 	DeviceAssignmentCreateRequest assnRequest = new DeviceAssignmentCreateRequest();
-	assnRequest.setAssignmentType(DeviceAssignmentType.Associated);
-	assnRequest.setAssetModuleId("testAssetModuleId");
-	assnRequest.setAssetId(TEST_ASSET_ID);
-	assnRequest.setDeviceHardwareId(device.getHardwareId());
+	assnRequest.setDeviceToken(device.getToken());
 	metadata = new HashMap<String, String>();
 	metadata.put("name1", "value1");
 	metadata.put("name2", "value2");
@@ -199,9 +193,10 @@ public class ApiTests {
 	SiteWhereClient client = new SiteWhereClient("http://localhost:9090/sitewhere/api/", "admin", "password");
 	DeviceEventBatch batch = new DeviceEventBatch();
 	batch.setHardwareId("5a95f3f2-96f0-47f9-b98d-f5c081d01948");
-	DeviceMeasurementsCreateRequest mx = new DeviceMeasurementsCreateRequest();
+	DeviceMeasurementCreateRequest mx = new DeviceMeasurementCreateRequest();
+	mx.setName("test");
+	mx.setValue(123.4);
 	mx.setEventDate(new Date());
-	mx.addOrReplaceMeasurement("test", 123.4);
 	Map<String, String> metadata = new HashMap<String, String>();
 	metadata.put("test", "value");
 	mx.setMetadata(metadata);
@@ -229,12 +224,12 @@ public class ApiTests {
 	SiteWhereClient client = new SiteWhereClient();
 	ZoneCreateRequest request = new ZoneCreateRequest();
 	request.setName("My Test Zone");
-	List<Location> coords = new ArrayList<Location>();
-	coords.add(new Location(30.0, -85.0));
-	coords.add(new Location(30.0, -90.0));
-	coords.add(new Location(35.0, -90.0));
-	coords.add(new Location(35.0, -85.0));
-	request.setCoordinates(coords);
+	List<Location> bounds = new ArrayList<Location>();
+	bounds.add(new Location(30.0, -85.0));
+	bounds.add(new Location(30.0, -90.0));
+	bounds.add(new Location(35.0, -90.0));
+	bounds.add(new Location(35.0, -85.0));
+	request.setBounds(bounds);
 	Zone results = client.createZone(TEST_SITE_TOKEN, request);
 	System.out.println("Created zone: " + results.getName());
 	SearchResults<Zone> search = client.listZonesForSite(TEST_SITE_TOKEN);
@@ -263,9 +258,10 @@ public class ApiTests {
 	location.setElevation(0.0);
 	json(client.createDeviceLocation(assignment, location));
 
-	DeviceMeasurementsCreateRequest mxs = new DeviceMeasurementsCreateRequest();
-	mxs.addOrReplaceMeasurement("fuel.level", 77.0);
-	json(client.createDeviceMeasurements(assignment, mxs));
+	DeviceMeasurementCreateRequest mx = new DeviceMeasurementCreateRequest();
+	mx.setName("fuel.level");
+	mx.setValue(77.0);
+	json(client.createDeviceMeasurements(assignment, mx));
 
 	DeviceAlertCreateRequest alert = new DeviceAlertCreateRequest();
 	alert.setType("engine.overheat");
@@ -316,21 +312,6 @@ public class ApiTests {
     }
 
     @Test
-    public void sendBatchCommandInvocation() throws SiteWhereException {
-	SiteWhereClient client = new SiteWhereClient();
-	List<Device> androids = getDevicesForSpecification(ANDROID_SPEC_TOKEN);
-	List<String> hwids = new ArrayList<String>();
-	for (Device device : androids) {
-	    hwids.add(device.getHardwareId());
-	}
-	Map<String, String> parameters = new HashMap<String, String>();
-	parameters.put("color", "#ff0000");
-	BatchOperation op = client.createBatchCommandInvocation(null, "17340bb1-8673-4fc9-8ed0-4f818acedaa5",
-		parameters, hwids);
-	System.out.println("Created operation: " + op.getToken());
-    }
-
-    @Test
     public void listCommandsForSpecification() throws SiteWhereException {
 	SiteWhereClient client = new SiteWhereClient();
 	DeviceCommandSearchResults results = client.listDeviceCommands(ANDROID_SPEC_TOKEN, true);
@@ -350,8 +331,8 @@ public class ApiTests {
 	Assert.assertNotNull(match);
 	Assert.assertEquals(group.getName(), match.getName());
 	DeviceGroupElementCreateRequest elm1 = new DeviceGroupElementCreateRequest();
-	elm1.setType(GroupElementType.Device);
-	elm1.setElementId("07ecf9f0-2786-48c8-ba1e-ec48a87fa104");
+	elm1.setDeviceToken(TEST_HARDWARE_ID);
+	elm1.setRoles(roles);
 	List<DeviceGroupElementCreateRequest> elms = new ArrayList<DeviceGroupElementCreateRequest>();
 	elms.add(elm1);
 	client.addDeviceGroupElements(group.getToken(), elms);
@@ -365,27 +346,6 @@ public class ApiTests {
 	Assert.assertNotNull(deleted);
 	DeviceGroupSearchResults after = client.listDeviceGroups(null, new SearchCriteria(1, 0), false);
 	Assert.assertEquals(before.getNumResults(), after.getNumResults() + 1);
-    }
-
-    /**
-     * Get all devices for a given specification. NOTE: Logic only looks at the
-     * first 100 devices.
-     * 
-     * @param token
-     * @return
-     * @throws SiteWhereException
-     */
-    protected List<Device> getDevicesForSpecification(String token) throws SiteWhereException {
-	SiteWhereClient client = new SiteWhereClient();
-	DateRangeSearchCriteria criteria = new DateRangeSearchCriteria(1, 100, null, null);
-	SearchResults<Device> devices = client.listDevices(false, true, true, true, criteria);
-	List<Device> results = new ArrayList<Device>();
-	for (Device device : devices.getResults()) {
-	    if (device.getSpecificationToken().equals(token)) {
-		results.add(device);
-	    }
-	}
-	return results;
     }
 
     /**

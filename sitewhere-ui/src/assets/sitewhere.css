@@ -1,9 +1,0 @@
-.overlay {
-  z-index: 1000;
-}
-.dialog__content {
-  z-index: 1010;
-}
-.menu__content {
-  z-index: 1020;
-}

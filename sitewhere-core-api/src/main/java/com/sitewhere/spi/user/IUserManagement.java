@@ -10,6 +10,7 @@ package com.sitewhere.spi.user;
 import java.util.List;
 
 import com.sitewhere.spi.SiteWhereException;
+import com.sitewhere.spi.search.ISearchResults;
 import com.sitewhere.spi.server.lifecycle.ILifecycleComponent;
 import com.sitewhere.spi.user.request.IGrantedAuthorityCreateRequest;
 import com.sitewhere.spi.user.request.IUserCreateRequest;
@@ -29,7 +30,7 @@ public interface IUserManagement extends ILifecycleComponent {
      * @return
      * @throws SiteWhereException
      */
-    public IUser createUser(IUserCreateRequest request, boolean encodePassword) throws SiteWhereException;
+    public IUser createUser(IUserCreateRequest request, Boolean encodePassword) throws SiteWhereException;
 
     /**
      * Imports a user (including encrypted password) from an external system.
@@ -106,23 +107,22 @@ public interface IUserManagement extends ILifecycleComponent {
 	    throws SiteWhereException;
 
     /**
-     * Get the list of all users that meet the given criteria.
+     * Find users that match the given search criteria.
      * 
      * @param criteria
      * @return
      * @throws SiteWhereException
      */
-    public List<IUser> listUsers(IUserSearchCriteria criteria) throws SiteWhereException;
+    public ISearchResults<IUser> listUsers(IUserSearchCriteria criteria) throws SiteWhereException;
 
     /**
      * Delete the user with the given username.
      * 
      * @param username
-     * @param force
      * @return
      * @throws SiteWhereException
      */
-    public IUser deleteUser(String username, boolean force) throws SiteWhereException;
+    public IUser deleteUser(String username) throws SiteWhereException;
 
     /**
      * Create a new granted authority.
@@ -159,7 +159,7 @@ public interface IUserManagement extends ILifecycleComponent {
      * @return
      * @throws SiteWhereException
      */
-    public List<IGrantedAuthority> listGrantedAuthorities(IGrantedAuthoritySearchCriteria criteria)
+    public ISearchResults<IGrantedAuthority> listGrantedAuthorities(IGrantedAuthoritySearchCriteria criteria)
 	    throws SiteWhereException;
 
     /**

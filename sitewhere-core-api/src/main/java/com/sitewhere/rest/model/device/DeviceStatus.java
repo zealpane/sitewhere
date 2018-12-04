@@ -1,6 +1,15 @@
+/*
+ * Copyright (c) SiteWhere, LLC. All rights reserved. http://www.sitewhere.com
+ *
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
 package com.sitewhere.rest.model.device;
 
-import com.sitewhere.rest.model.common.MetadataProvider;
+import java.util.UUID;
+
+import com.sitewhere.rest.model.common.PersistentEntity;
 import com.sitewhere.spi.device.IDeviceStatus;
 
 /**
@@ -8,7 +17,7 @@ import com.sitewhere.spi.device.IDeviceStatus;
  * 
  * @author Derek
  */
-public class DeviceStatus extends MetadataProvider implements IDeviceStatus {
+public class DeviceStatus extends PersistentEntity implements IDeviceStatus {
 
     /** Serial version UID */
     private static final long serialVersionUID = 3276455653992126853L;
@@ -16,8 +25,8 @@ public class DeviceStatus extends MetadataProvider implements IDeviceStatus {
     /** Status code */
     private String code;
 
-    /** Specification token */
-    private String specificationToken;
+    /** Unique id for parent device type */
+    private UUID deviceTypeId;
 
     /** Display name */
     private String name;
@@ -39,6 +48,7 @@ public class DeviceStatus extends MetadataProvider implements IDeviceStatus {
      * 
      * @see com.sitewhere.spi.device.IDeviceStatus#getCode()
      */
+    @Override
     public String getCode() {
 	return code;
     }
@@ -48,16 +58,15 @@ public class DeviceStatus extends MetadataProvider implements IDeviceStatus {
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.device.IDeviceStatus#getSpecificationToken()
+     * @see com.sitewhere.spi.device.IDeviceStatus#getDeviceTypeId()
      */
-    public String getSpecificationToken() {
-	return specificationToken;
+    @Override
+    public UUID getDeviceTypeId() {
+	return deviceTypeId;
     }
 
-    public void setSpecificationToken(String specificationToken) {
-	this.specificationToken = specificationToken;
+    public void setDeviceTypeId(UUID deviceTypeId) {
+	this.deviceTypeId = deviceTypeId;
     }
 
     /*

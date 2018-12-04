@@ -9,13 +9,13 @@ package com.sitewhere.device.marshaling;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.sitewhere.rest.model.batch.request.BatchCommandForCriteriaRequest;
 import com.sitewhere.rest.model.device.command.DeviceCommand;
-import com.sitewhere.rest.model.device.event.DeviceCommandInvocation;
-import com.sitewhere.rest.model.device.request.BatchCommandForCriteriaRequest;
+import com.sitewhere.rest.model.device.marshaling.MarshaledDeviceCommandInvocation;
 import com.sitewhere.spi.SiteWhereException;
+import com.sitewhere.spi.area.IArea;
 import com.sitewhere.spi.device.IDeviceManagement;
-import com.sitewhere.spi.device.IDeviceSpecification;
-import com.sitewhere.spi.device.ISite;
+import com.sitewhere.spi.device.IDeviceType;
 import com.sitewhere.spi.device.command.ICommandParameter;
 import com.sitewhere.spi.device.group.IDeviceGroup;
 
@@ -36,7 +36,7 @@ public class CommandHtmlHelper {
      * @return
      * @throws SiteWhereException
      */
-    public static String getHtml(DeviceCommandInvocation invocation) throws SiteWhereException {
+    public static String getHtml(MarshaledDeviceCommandInvocation invocation) throws SiteWhereException {
 	DeviceCommand command = invocation.getCommand();
 	if (command == null) {
 	    throw new SiteWhereException("Command information must be populated to generate HTML.");
@@ -76,26 +76,26 @@ public class CommandHtmlHelper {
      */
     public static String getHtml(BatchCommandForCriteriaRequest criteria, IDeviceManagement devices,
 	    String relativePath) throws SiteWhereException {
-	if (StringUtils.isEmpty(criteria.getSpecificationToken())) {
-	    throw new SiteWhereException("Specification token must be populated to generate HTML.");
+	if (StringUtils.isEmpty(criteria.getDeviceTypeToken())) {
+	    throw new SiteWhereException("Device type token must be populated to generate HTML.");
 	}
-	IDeviceSpecification specification = devices.getDeviceSpecificationByToken(criteria.getSpecificationToken());
-	if (specification == null) {
-	    throw new SiteWhereException("Invalid specification reference: " + criteria.getSpecificationToken());
+	IDeviceType deviceType = devices.getDeviceTypeByToken(criteria.getDeviceTypeToken());
+	if (deviceType == null) {
+	    throw new SiteWhereException("Invalid device type reference: " + criteria.getDeviceTypeToken());
 	}
 	String html = "all devices";
-	if (!StringUtils.isEmpty(criteria.getSiteToken())) {
-	    ISite site = devices.getSiteByToken(criteria.getSiteToken());
-	    if (site == null) {
-		throw new SiteWhereException("Invalid site reference: " + criteria.getGroupToken());
+	if (!StringUtils.isEmpty(criteria.getAreaToken())) {
+	    IArea area = devices.getAreaByToken(criteria.getAreaToken());
+	    if (area == null) {
+		throw new SiteWhereException("Invalid area reference: " + criteria.getAreaToken());
 	    }
-	    html += " belonging to site <a href=\"" + relativePath + "/sites/" + site.getToken() + ".html\">"
-		    + site.getName() + "</a>";
+	    html += " belonging to area <a href=\"" + relativePath + "/areas/" + area.getToken() + ".html\">"
+		    + area.getName() + "</a>";
 	}
-	html += " with specification <a href=\"" + relativePath + "/specifications/" + specification.getToken()
-		+ ".html\">" + specification.getName() + "</a>";
+	html += " with device type <a href=\"" + relativePath + "/devicetypes/" + deviceType.getToken() + ".html\">"
+		+ deviceType.getName() + "</a>";
 	if (!StringUtils.isEmpty(criteria.getGroupToken())) {
-	    IDeviceGroup group = devices.getDeviceGroup(criteria.getGroupToken());
+	    IDeviceGroup group = devices.getDeviceGroupByToken(criteria.getGroupToken());
 	    if (group == null) {
 		throw new SiteWhereException("Invalid group reference: " + criteria.getGroupToken());
 	    }

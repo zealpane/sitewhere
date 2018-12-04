@@ -10,33 +10,33 @@ package com.sitewhere.spi;
 import java.util.List;
 import java.util.Map;
 
+import com.sitewhere.rest.model.area.Area;
+import com.sitewhere.rest.model.area.Zone;
+import com.sitewhere.rest.model.area.request.AreaCreateRequest;
+import com.sitewhere.rest.model.area.request.ZoneCreateRequest;
+import com.sitewhere.rest.model.batch.BatchOperation;
 import com.sitewhere.rest.model.common.MetadataProvider;
 import com.sitewhere.rest.model.device.Device;
 import com.sitewhere.rest.model.device.DeviceAssignment;
-import com.sitewhere.rest.model.device.DeviceSpecification;
-import com.sitewhere.rest.model.device.Site;
-import com.sitewhere.rest.model.device.Zone;
-import com.sitewhere.rest.model.device.batch.BatchOperation;
+import com.sitewhere.rest.model.device.DeviceType;
 import com.sitewhere.rest.model.device.command.DeviceCommand;
 import com.sitewhere.rest.model.device.event.DeviceAlert;
 import com.sitewhere.rest.model.device.event.DeviceCommandInvocation;
 import com.sitewhere.rest.model.device.event.DeviceEventBatch;
 import com.sitewhere.rest.model.device.event.DeviceEventBatchResponse;
 import com.sitewhere.rest.model.device.event.DeviceLocation;
-import com.sitewhere.rest.model.device.event.DeviceMeasurements;
+import com.sitewhere.rest.model.device.event.DeviceMeasurement;
 import com.sitewhere.rest.model.device.event.request.DeviceAlertCreateRequest;
 import com.sitewhere.rest.model.device.event.request.DeviceCommandInvocationCreateRequest;
 import com.sitewhere.rest.model.device.event.request.DeviceLocationCreateRequest;
-import com.sitewhere.rest.model.device.event.request.DeviceMeasurementsCreateRequest;
+import com.sitewhere.rest.model.device.event.request.DeviceMeasurementCreateRequest;
 import com.sitewhere.rest.model.device.group.DeviceGroup;
 import com.sitewhere.rest.model.device.request.DeviceCommandCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceGroupCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceGroupElementCreateRequest;
-import com.sitewhere.rest.model.device.request.DeviceSpecificationCreateRequest;
 import com.sitewhere.rest.model.device.request.DeviceStreamCreateRequest;
-import com.sitewhere.rest.model.device.request.SiteCreateRequest;
-import com.sitewhere.rest.model.device.request.ZoneCreateRequest;
+import com.sitewhere.rest.model.device.request.DeviceTypeCreateRequest;
 import com.sitewhere.rest.model.device.streaming.DeviceStream;
 import com.sitewhere.rest.model.search.AssetSearchResults;
 import com.sitewhere.rest.model.search.DateRangeSearchCriteria;
@@ -48,13 +48,14 @@ import com.sitewhere.rest.model.search.DeviceGroupElementSearchResults;
 import com.sitewhere.rest.model.search.DeviceGroupSearchResults;
 import com.sitewhere.rest.model.search.DeviceLocationSearchResults;
 import com.sitewhere.rest.model.search.DeviceSearchResults;
-import com.sitewhere.rest.model.search.DeviceSpecificationSearchResults;
 import com.sitewhere.rest.model.search.DeviceStreamSearchResults;
+import com.sitewhere.rest.model.search.DeviceTypeSearchResults;
 import com.sitewhere.rest.model.search.SearchCriteria;
 import com.sitewhere.rest.model.search.SearchResults;
 import com.sitewhere.rest.model.search.ZoneSearchResults;
 import com.sitewhere.rest.model.system.Version;
 import com.sitewhere.spi.device.DeviceAssignmentStatus;
+import com.sitewhere.spi.device.event.IDeviceMeasurement;
 import com.sitewhere.spi.device.request.IDeviceAssignmentCreateRequest;
 
 /**
@@ -73,37 +74,35 @@ public interface ISiteWhereClient {
     public Version getSiteWhereVersion() throws SiteWhereException;
 
     /**
-     * Create a new device specification.
+     * Create a new device type.
      * 
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public DeviceSpecification createDeviceSpecification(DeviceSpecificationCreateRequest request)
-	    throws SiteWhereException;
+    public DeviceType createDeviceType(DeviceTypeCreateRequest request) throws SiteWhereException;
 
     /**
-     * Get a device specification by token.
+     * Get a device type by token.
      * 
      * @param token
      * @return
      * @throws SiteWhereException
      */
-    public DeviceSpecification getDeviceSpecificationByToken(String token) throws SiteWhereException;
+    public DeviceType getDeviceTypeByToken(String token) throws SiteWhereException;
 
     /**
-     * Update an existing device specification.
+     * Update an existing device type.
      * 
      * @param token
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public DeviceSpecification updateDeviceSpecification(String token, DeviceSpecificationCreateRequest request)
-	    throws SiteWhereException;
+    public DeviceType updateDeviceType(String token, DeviceTypeCreateRequest request) throws SiteWhereException;
 
     /**
-     * List device specifications that meet the given criteria.
+     * List device types that meet the given criteria.
      * 
      * @param includeDeleted
      * @param includeDetailedAssetInfo
@@ -111,19 +110,18 @@ public interface ISiteWhereClient {
      * @return
      * @throws SiteWhereException
      */
-    public DeviceSpecificationSearchResults listDeviceSpecifications(boolean includeDeleted,
-	    boolean includeDetailedAssetInfo, SearchCriteria criteria) throws SiteWhereException;
+    public DeviceTypeSearchResults listDeviceTypes(boolean includeDeleted, boolean includeDetailedAssetInfo,
+	    SearchCriteria criteria) throws SiteWhereException;
 
     /**
-     * Delete an existing device specification.
+     * Delete an existing device type.
      * 
      * @param token
      * @param deletePermanently
      * @return
      * @throws SiteWhereException
      */
-    public DeviceSpecification deleteDeviceSpecification(String token, boolean deletePermanently)
-	    throws SiteWhereException;
+    public DeviceType deleteDeviceType(String token, boolean deletePermanently) throws SiteWhereException;
 
     /**
      * Create a new device command for a specification.
@@ -148,22 +146,22 @@ public interface ISiteWhereClient {
 	    throws SiteWhereException;
 
     /**
-     * Create a new site.
+     * Create a new area.
      * 
      * @param request
      * @return
      * @throws SiteWhereException
      */
-    public Site createSite(SiteCreateRequest request) throws SiteWhereException;
+    public Area createArea(AreaCreateRequest request) throws SiteWhereException;
 
     /**
-     * Get Site by unique token.
+     * Get area by unique token.
      * 
      * @param token
      * @return
      * @throws SiteWhereException
      */
-    public Site getSiteByToken(String token) throws SiteWhereException;
+    public Area getAreaByToken(String token) throws SiteWhereException;
 
     /**
      * Create a new zone associated with a site.
@@ -278,8 +276,7 @@ public interface ISiteWhereClient {
 	    DeviceAssignmentStatus status, SearchCriteria criteria) throws SiteWhereException;
 
     /**
-     * Add a batch of events to the current assignment for the given hardware
-     * id.
+     * Add a batch of events to the current assignment for the given hardware id.
      * 
      * @param hardwareId
      *            hardware id whose assignment will have events added
@@ -351,8 +348,8 @@ public interface ISiteWhereClient {
      * @return
      * @throws SiteWhereException
      */
-    public DeviceMeasurements createDeviceMeasurements(String assignmentToken,
-	    DeviceMeasurementsCreateRequest measurements) throws SiteWhereException;
+    public DeviceMeasurement createDeviceMeasurements(String assignmentToken,
+	    DeviceMeasurementCreateRequest measurements) throws SiteWhereException;
 
     /**
      * Get most recent device measurements for a given assignment.
@@ -362,7 +359,7 @@ public interface ISiteWhereClient {
      * @return
      * @throws SiteWhereException
      */
-    public SearchResults<DeviceMeasurements> listDeviceMeasurements(String assignmentToken,
+    public SearchResults<IDeviceMeasurement> listDeviceMeasurements(String assignmentToken,
 	    DateRangeSearchCriteria searchCriteria) throws SiteWhereException;
 
     /**

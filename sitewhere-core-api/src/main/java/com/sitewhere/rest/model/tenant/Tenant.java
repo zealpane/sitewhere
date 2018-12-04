@@ -7,15 +7,12 @@
  */
 package com.sitewhere.rest.model.tenant;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.sitewhere.rest.model.common.MetadataProviderEntity;
-import com.sitewhere.spi.SiteWhereException;
-import com.sitewhere.spi.server.ITenantRuntimeState;
+import com.sitewhere.rest.model.common.BrandedEntity;
 import com.sitewhere.spi.tenant.ITenant;
 
 /**
@@ -24,22 +21,19 @@ import com.sitewhere.spi.tenant.ITenant;
  * @author Derek
  */
 @JsonInclude(Include.NON_NULL)
-public class Tenant extends MetadataProviderEntity implements ITenant, Serializable {
+public class Tenant extends BrandedEntity implements ITenant {
 
     /** Serial version UUID */
     private static final long serialVersionUID = -353489785570975056L;
 
-    /** Unqiue tenant id */
-    private String id;
-
     /** Tenant name */
     private String name;
 
+    /** Logo URL */
+    private String logoUrl;
+
     /** Device authentication token */
     private String authenticationToken;
-
-    /** Tenant logo URL */
-    private String logoUrl;
 
     /** List of user ids authorized to access tenant */
     private List<String> authorizedUserIds = new ArrayList<String>();
@@ -47,27 +41,15 @@ public class Tenant extends MetadataProviderEntity implements ITenant, Serializa
     /** Tenant template id */
     private String tenantTemplateId;
 
-    /** Runtime state of tenant engine */
-    private ITenantRuntimeState engineState;
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.user.ITenant#getId()
-     */
-    public String getId() {
-	return id;
-    }
-
-    public void setId(String id) {
-	this.id = id;
-    }
+    /** Dataset template id */
+    private String datasetTemplateId;
 
     /*
      * (non-Javadoc)
      * 
      * @see com.sitewhere.spi.user.ITenant#getName()
      */
+    @Override
     public String getName() {
 	return name;
     }
@@ -77,22 +59,7 @@ public class Tenant extends MetadataProviderEntity implements ITenant, Serializa
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.user.ITenant#getAuthenticationToken()
-     */
-    public String getAuthenticationToken() {
-	return authenticationToken;
-    }
-
-    public void setAuthenticationToken(String authenticationToken) {
-	this.authenticationToken = authenticationToken;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.user.ITenant#getLogoUrl()
+     * @see com.sitewhere.spi.tenant.ITenant#getLogoUrl()
      */
     public String getLogoUrl() {
 	return logoUrl;
@@ -105,8 +72,23 @@ public class Tenant extends MetadataProviderEntity implements ITenant, Serializa
     /*
      * (non-Javadoc)
      * 
+     * @see com.sitewhere.spi.user.ITenant#getAuthenticationToken()
+     */
+    @Override
+    public String getAuthenticationToken() {
+	return authenticationToken;
+    }
+
+    public void setAuthenticationToken(String authenticationToken) {
+	this.authenticationToken = authenticationToken;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.sitewhere.spi.user.ITenant#getAuthorizedUserIds()
      */
+    @Override
     public List<String> getAuthorizedUserIds() {
 	return authorizedUserIds;
     }
@@ -120,6 +102,7 @@ public class Tenant extends MetadataProviderEntity implements ITenant, Serializa
      * 
      * @see com.sitewhere.spi.tenant.ITenant#getTenantTemplateId()
      */
+    @Override
     public String getTenantTemplateId() {
 	return tenantTemplateId;
     }
@@ -129,33 +112,14 @@ public class Tenant extends MetadataProviderEntity implements ITenant, Serializa
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.sitewhere.spi.user.ITenant#getEngineState()
+     * @see com.sitewhere.spi.tenant.ITenant#getDatasetTemplateId()
      */
-    public ITenantRuntimeState getEngineState() {
-	return engineState;
+    @Override
+    public String getDatasetTemplateId() {
+	return datasetTemplateId;
     }
 
-    public void setEngineState(ITenantRuntimeState engineState) {
-	this.engineState = engineState;
-    }
-
-    /**
-     * Copy contents from the SPI class.
-     * 
-     * @param input
-     * @return
-     */
-    public static Tenant copy(ITenant input) throws SiteWhereException {
-	Tenant result = new Tenant();
-	result.setId(input.getId());
-	result.setName(input.getName());
-	result.setLogoUrl(input.getLogoUrl());
-	result.setAuthenticationToken(input.getAuthenticationToken());
-	result.getAuthorizedUserIds().addAll(input.getAuthorizedUserIds());
-	result.setEngineState(input.getEngineState());
-	MetadataProviderEntity.copy(input, result);
-	return result;
+    public void setDatasetTemplateId(String datasetTemplateId) {
+	this.datasetTemplateId = datasetTemplateId;
     }
 }
